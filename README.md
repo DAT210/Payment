@@ -95,4 +95,3 @@ Documents your database design and schemas, relations etc...
 ## Licensing
 
 State what the license is and how to find the text version of the license.
-
