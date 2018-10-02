@@ -7,6 +7,9 @@ RUN npm install
 
 COPY ./src ./src
 
+ENV NODE_ENV prod
+COPY ./env/default.env ./env/prod.env ./env/
+
 EXPOSE 3000
 
 CMD [ "node", "./src/app.js" ]

@@ -1,9 +1,19 @@
 const path = require('path');
+
+let envfile = process.env.NODE_ENV
+if (envfile === undefined) {
+	envfile = 'default';
+}
+
+require('dotenv').config({
+	path: path.resolve(__dirname, `../env/${envfile}.env`)
+});
+
 const nunjucks = require('nunjucks');
 const express = require('express');
 
+const port = process.env.PORT
 const app = express();
-const port = 3000;
 
 // Configures express to use nunjucks as template engine
 nunjucks.configure(__dirname, {

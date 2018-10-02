@@ -49,6 +49,10 @@ cd Payment/
 npm install
 ```
 
+You should copy the /env/default.env file to /env/dev.env and fill in your API keys.
+Also set the environment variable NODE_ENV=dev. When using docker, you should also
+have a seperate prod.env file.
+
 ### Deploying / Publishing
 give instructions on how to build and release a new version
 In case there's some step you have to take that publishes this project to a
