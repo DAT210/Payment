@@ -19,7 +19,7 @@ Here you should say what actually happens when you execute the code above.
 ## Developing
 
 ### Built With
-Javascript
+Javascript, NodeJS, ExpressJS and Nunjucks
 
 ### Prerequisites
 What is needed to set up the dev environment. For instance, global dependencies or any other tools. include download links.
