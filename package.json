@@ -1,8 +1,8 @@
 {
-  "name": "dockertesting",
-  "version": "1.0.0",
-  "description": "docker test",
-  "main": "app.js",
+  "name": "Payment Service",
+  "version": "0.0.1",
+  "description": "DAT210 Fall18 Payment Service",
+  "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "nunjucks": "^3.1.3"
   }
