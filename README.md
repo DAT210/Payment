@@ -1,20 +1,34 @@
-![Logo of the project](./images/logo.sample.png)
+# Payment Service
+> Payment API
 
-# Payment &middot; [![Build Status](https://img.shields.io/travis/npm/npm/latest.svg?style=flat-square)](https://travis-ci.org/npm/npm) [![npm](https://img.shields.io/npm/v/npm.svg?style=flat-square)](https://www.npmjs.com/package/npm) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
-> Additional information or tag line
-
-A brief description of your project, what it is used for.
+The Payment Service can be used to charge customers.
+Supports Paypal, Stripe and cash.
 
 ## Installing / Getting started
 
-A quick introduction of the minimal setup you need to get a hello world up &
-running.
+You can run the Payment service with Docker or Node.
 
+Docker
 ```shell
-commands here
+# Navigate to project directory
+cd project_directory
+# Create a Docker image called PaymentService
+docker build -t PaymentService .
+# Run the image at <port> in detached mode
+docker run -p <port>:3000 -d PaymentService
 ```
 
-Here you should say what actually happens when you execute the code above.
+Node
+```shell
+# Navigate to project directory
+cd project_directory
+# Install dependencies
+npm install
+# Run the server
+node src/app.js
+```
+
+You can now connect to the service at localhost:3000 (or localhost:<port> if you're using Docker).
 
 ## Developing
 
@@ -22,35 +36,18 @@ Here you should say what actually happens when you execute the code above.
 Javascript, NodeJS, ExpressJS and Nunjucks
 
 ### Prerequisites
-What is needed to set up the dev environment. For instance, global dependencies or any other tools. include download links.
-
+You need [NodeJS](https://nodejs.org) to develop this service. Built with version 8.12.0.
 
 ### Setting up Dev
 
-Here's a brief intro about what a developer must do in order to start developing
-the project further:
-
 ```shell
-git clone https://github.com/your/your-project.git
-cd your-project/
-packagemanager install
+# Clone repository from github
+git clone https://github.com/DAT210/Payment.git
+# Navigate to it
+cd Payment/
+# Install dependencies
+npm install
 ```
-
-And state what happens step-by-step. If there is any virtual environment, local server or database feeder needed, explain here.
-
-### Building
-
-If your project needs some additional steps for the developer to build the
-project after some code changes, state them here. for example:
-
-```shell
-./configure
-make
-make install
-```
-
-Here again you should state what actually happens when the code above gets
-executed.
 
 ### Deploying / Publishing
 give instructions on how to build and release a new version
