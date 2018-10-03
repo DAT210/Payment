@@ -41,6 +41,7 @@
                 .then(function () {
                     // Show a confirmation message to the buyer
                     window.alert('Thank you for your purchase!');
+		    $.post("/handle_payment/orderid/paid_amount")
                 });
         }
     }, '#paypal-button');
