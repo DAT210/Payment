@@ -107,3 +107,4 @@ tags
 # End of https://www.gitignore.io/api/vim,node,visualstudiocode
 
 env/dev.env
+package-lock.json
