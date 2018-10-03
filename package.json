@@ -1,5 +1,5 @@
 {
-  "name": "Payment Service",
+  "name": "Payment_Service",
   "version": "0.0.1",
   "description": "DAT210 Fall18 Payment Service",
   "main": "src/app.js",
