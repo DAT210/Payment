@@ -31,6 +31,7 @@ nunjucks.configure(__dirname, {
 	express: app
 });
 
+app.use(express.static(__dirname, + '/static'));
 
 // Example route
 app.get('/', function (req, res) {
