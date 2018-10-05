@@ -2,7 +2,9 @@ const path = require('path');
 
 let envfile = process.env.NODE_ENV
 if (envfile === undefined) {
-	envfile = 'default';
+	console.log('You need to set the NODE_ENV variable to run this program.');
+	console.log('Rename the /env/default.env file to match your NODE_ENV variable, and fill in missing api keys');
+	return;
 }
 
 require('dotenv').config({
@@ -44,19 +46,27 @@ app.get('/', function (req, res) {
 /*
 	Create db entry for orderid.
 */
-app.post('/payment/:orderid', function(req, res) {
-	// Retrieve order information from Orders service
-	let orderid = req.params.orderid;
+app.post('/payments/:orderId', function(req, res) {
+
+	// Retrieve order information from Orders service,
+	// or get in from the request.
+	let orderid = parseInt(req.params.orderId, 10);
 	console.log("Inserting new order " + orderid);	
+
 	// Calculate price
 	let sum = 0;
 	
 	db.run(`INSERT INTO Payment(Order_ID, Sum, Paid, Paid_Date, Discount) VALUES (${orderid}, ${sum}, 0, "0", 0)`, function(err) {
 		if (err) {
 			console.log(err.message);
-			res.send(err.message);
+			
+			let resp = JSON.parse('{}');
+			resp.message = "Could not create the payment"
+			resp.description = err.message
+			res.status(400).json(resp);
+			
 		} else {
-			res.send("OK");
+			res.status(201).end();
 		}
 	});
 });
@@ -65,36 +75,34 @@ app.post('/payment/:orderid', function(req, res) {
 /*
 	Display payment page to user
 */
-app.get('/payment/:orderid', function(req, res) {
+app.get('/payment-pages/:orderId', function(req, res) {
 	// Check orderid in db
-	let orderid = parseInt(req.params.orderid, 10);
+	let orderid = parseInt(req.params.orderId, 10);
 
 	// Check if user owns order
 
 	db.get(`SELECT * FROM Payment WHERE Order_ID = ${orderid}`, (err, row) => {
-		res.send(row);
-		return;
 	});
 
 	// Render page
-	res.send("empty page");
+
+	res.status(500).send('Not implemented yet');	
 });
 
 
 /*
-	Check if a payment is complete
+	Get status about a payment
 */
-app.get('/payment/:orderid/status', function(req, res) {
+app.get('/payments/:orderId', function(req, res) {
 	// Check orderid in db
-	let orderid = parseInt(req.params.orderid, 10);
+	let orderid = parseInt(req.params.orderId, 10);
 
 	db.get(`SELECT * FROM Payment WHERE Order_ID = ${orderid}`, (err, row) => {
-		res.send(row.Paid);
+		res.status(200).json(row);
 		return;
 	});
 
-	// Render page
-	res.send("no data");
+	res.status(404).end();
 });
 
 
@@ -102,8 +110,9 @@ app.get('/payment/:orderid/status', function(req, res) {
 /*
 	Called when user finishes payment on stripe or paypal (and cash?)
 */
-app.post('/update_payment/:orderid/complete/', function(req, res) {
-	let orderid = parseInt(req.params.orderid);
+app.put('/payments/:orderId', function(req, res) {
+	let orderid = parseInt(req.params.orderId, 10);
+	
 	db.run(`ÙPDATE Payment SET Paid = 1, Paid_Date = DATETIME('now') WHERE Order_ID = ${orderid}`, (err) => {
 		console.log(err.message);
 		res.send(err.message);
@@ -112,21 +121,5 @@ app.post('/update_payment/:orderid/complete/', function(req, res) {
 
 	res.send("Payment complete");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.listen(port, () => console.log(`Payment service listening on port ${port}!`));

@@ -8,10 +8,21 @@ Supports Paypal, Stripe and cash.
 
 You can run the Payment service with Docker or Node.
 
+This service depends on API keys from Paypal and Stripe.
+Before running you need have them in a environment file.
+Copy and rename the /env/default.env fileand fill in your keys.
+You .env file should be named prod.env if you're running with Docker.
+The service determines which .env file to use based on your NODE_ENV environment variable.
+It is currently not possible to run the service without a environment file.
+
 Docker
 ```shell
 # Navigate to project directory
 cd project_directory
+# Create .env file
+cp ./env/default.env ./env/prod.env
+# Insert your keys
+vi ./env/prod.env
 # Create a Docker image called PaymentService
 docker build -t PaymentService .
 # Run the image at <port> in detached mode
@@ -24,8 +35,21 @@ Node
 cd project_directory
 # Install dependencies
 npm install
+# Create .env file
+cp ./env/default.env ./env/<name>.env
+# Insert your keys
+vi ./env/<name>.env
+# Set environment variable
+	# Windows Powershell
+    	$env:NODE_ENV = $env:NODE_ENV + "<name>"
+	# Windows CMD
+	SET NODE_ENV=<name>
 # Run the server
 node src/app.js
+
+# If you're using a linux terminal you run
+# it when you set the environment variable
+NODE_ENV=<name> node src/app.js
 ```
 
 You can now connect to the service at localhost:3000 (or localhost:<port> if you're using Docker).
@@ -47,11 +71,10 @@ git clone https://github.com/DAT210/Payment.git
 cd Payment/
 # Install dependencies
 npm install
+# Create dev environment file
+cp ./env/default.dev ./env/dev.env
+vi ./env/dev.env
 ```
-
-You should copy the /env/default.env file to /env/dev.env and fill in your API keys.
-Also set the environment variable NODE_ENV=dev. When using docker, you should also
-have a seperate prod.env file.
 
 ### Deploying / Publishing
 give instructions on how to build and release a new version
