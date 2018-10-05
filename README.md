@@ -41,7 +41,7 @@ cp ./env/default.env ./env/<name>.env
 vi ./env/<name>.env
 # Set environment variable
 	# Windows Powershell
-    	$env:NODE_ENV = $env:NODE_ENV + "<name>"
+    	$env:NODE_ENV = "<name>"
 	# Windows CMD
 	SET NODE_ENV=<name>
 # Run the server
