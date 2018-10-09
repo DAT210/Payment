@@ -118,8 +118,27 @@ in command window
 uses jshint style
 ## Api Reference
 
-If the api is external, link to api documentation. If not describe your api including authentication methods as well as explaining all the endpoints with their required parameters.
+The API doesn't require any authentication (yet).
 
+Endpoints:
+GET /payment-pages/:orderId
+GET /payments/:orderId
+POST /payments/
+
+Details:
+
+GET /payments/:orderId
+	Returns information about a payment
+	Status code 200 => Payment exists and information was returned.
+	Status code 404 => Payment doesn't exist and no information was returned.
+	Response format
+		{
+			"Order_ID":	int,
+			"Sum":		int,
+			"Paid":		int,
+			"Paid_Date":	string,
+			"Discount":	int
+		}
 
 ## Database
 
