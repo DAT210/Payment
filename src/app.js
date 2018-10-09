@@ -1,6 +1,7 @@
 const path = require('path');
 
 let envfile = process.env.NODE_ENV;
+
 if (envfile === undefined) {
 	console.log('You need to set the NODE_ENV variable to run this program.');
 	console.log('Rename the /env/default.env file to match your NODE_ENV variable, and fill in missing api keys');
@@ -116,17 +117,29 @@ app.get('/payment-pages/:orderId', function(req, res) {
 
 /*
 	Get status about a payment
+
+	Response format, JSON
+	Valid response with data has status code 200.
+	Code 404 means the payment doesn't exist
+	{
+		"Order_ID":	int,
+		"Sum":		int,
+		"Paid":		int,
+		"Paid_Date":	string,
+		"Discount":	int
+	}
 */
 app.get('/payments/:orderId', function(req, res) {
 	// Check orderid in db
 	let orderid = parseInt(req.params.orderId, 10);
 
 	db.get(`SELECT * FROM Payment WHERE Order_ID = ${orderid}`, (err, row) => {
-		res.status(200).json(row);
-		return;
+		if (row == undefined) {
+			res.status(404).end();
+		} else {
+			res.status(200).json(row);
+		}
 	});
-
-	res.status(404).end();
 });
 
 
