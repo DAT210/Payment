@@ -11,6 +11,30 @@ require('dotenv').config({
 	path: path.resolve(__dirname, `../env/${envfile}.env`)
 });
 
+// List all envVariables that are going to be tested
+let requiredEnv = [
+  'PORT', 'DATABASE_NAME',
+  'PAYPAL_SANBOX_ID', 'PAYPAL_PRODUCTION_ID',
+  'STRIPE_PUBLISH_KEY', 'STRIPE_SECRET_KEY'
+];
+
+var envVarTests = true
+
+// Tests all requiredEnv vars if they are empty and if they are longer than 0 length
+let unsetEnv = requiredEnv.filter((env) => !(process.env[env] !== ""));
+if (unsetEnv.length > 0) {
+  console.log("Required ENV variables are not set: [" + unsetEnv.join(', ') + "]");
+  envVarTests = false
+  return;
+}
+
+// tests that the database file is listed as .db
+let DbTest = process.env.DATABASE_NAME;
+if(!DbTest.endsWith(".db")){
+	console.log("wrong database link")
+	return;
+}
+
 const nunjucks = require('nunjucks');
 const express = require('express');
 
@@ -24,8 +48,8 @@ db.run('CREATE TABLE IF NOT EXISTS Payment(Order_ID INTEGER PRIMARY KEY, Sum INT
 	}
 });
 
-const port = process.env.PORT
 const app = express();
+const port = process.env.PORT
 
 // Configures express to use nunjucks as template engine
 nunjucks.configure(__dirname, {
@@ -122,4 +146,16 @@ app.put('/payments/:orderId', function(req, res) {
 	res.send("Payment complete");
 });
 
-app.listen(port, () => console.log(`Payment service listening on port ${port}!`));
+/*
+	test if the server can start 
+*/
+try{
+	if(envVarTests){
+		app.listen(port, () => console.log(`Payment service listening on port ${port}!`));
+	}else{
+		console.log("There is something wronge with the env variables. plese check before trying again");
+	}
+}catch(err){
+	console.log("Server can not start, check ENV variable port, it should be an INT between 0 =< port > 65536");
+}
+	
