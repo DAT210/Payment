@@ -110,3 +110,4 @@ env/dev.env
 env/prod.env
 env/test.env
 package-lock.json
+logdir/
