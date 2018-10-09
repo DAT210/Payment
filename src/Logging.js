@@ -4,12 +4,14 @@ require('winston-daily-rotate-file');
 const path =require('path')
 const logDir = 'log';
 
-  const filename= path.resolve(__dirname,'../logdir') //Path to logDir where all logs will be saved
-
+  const path= path.resolve(__dirname,'../logdir') //Path to logDir where all logs will be saved
+  
   const dailyRotateFileTransport = new transports.DailyRotateFile({ //Makes a new log document every day
-    filename: filename+`/%DATE%-log.json`,
+    filename: path+`/%DATE%-log.json`,
     datePattern: 'YYYY-MM-DD'
+    
   });
+
 const logger = createLogger({
   level: 'info',  //Level is set to info, can change levels if you want to use it to something different feks debug
   format: format.combine(
