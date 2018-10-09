@@ -95,6 +95,9 @@ using the project.
 
 ## Tests
 
+Before running any tests you need to set up a /env/test.env file with 
+your api keys.
+
 Linux users can run
 ```shell
 npm test
