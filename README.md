@@ -95,11 +95,14 @@ using the project.
 
 ## Tests
 
-Describe and show how to run the tests with code examples.
-Explain what these tests test and why.
-
+Linux users can run
 ```shell
-Give an example
+npm test
+```
+
+Windows users have to use powershell and run it using
+```shell
+$env:NODE_ENV = "test" ; npm run-script test-windows
 ```
 
 ## Style guide
