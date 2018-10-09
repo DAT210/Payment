@@ -25,5 +25,5 @@
   "devDependencies": {
     "concurrently": "^4.0.1",
     "jshint": "^2.9.6"
-  },
+  }
 }
