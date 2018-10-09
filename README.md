@@ -103,9 +103,13 @@ Give an example
 ```
 
 ## Style guide
-
 Explain your code style and show how to check it.
 
+to test style run
+	jshint <file to test> 
+in command window
+
+uses jshint style
 ## Api Reference
 
 If the api is external, link to api documentation. If not describe your api including authentication methods as well as explaining all the endpoints with their required parameters.

@@ -1,6 +1,6 @@
 const path = require('path');
 
-let envfile = process.env.NODE_ENV
+let envfile = process.env.NODE_ENV;
 if (envfile === undefined) {
 	console.log('You need to set the NODE_ENV variable to run this program.');
 	console.log('Rename the /env/default.env file to match your NODE_ENV variable, and fill in missing api keys');
@@ -18,27 +18,27 @@ let requiredEnv = [
   'STRIPE_PUBLISH_KEY', 'STRIPE_SECRET_KEY'
 ];
 
-var envVarTests = true
+var envVarTests = true;
 
 // Tests all requiredEnv vars if they are empty and if they are longer than 0 length
 let unsetEnv = requiredEnv.filter((env) => !(process.env[env] !== ""));
 if (unsetEnv.length > 0) {
   console.log("Required ENV variables are not set: [" + unsetEnv.join(', ') + "]");
-  envVarTests = false
+  envVarTests = false;
   return;
 }
 
 // tests that the database file is listed as .db
 let DbTest = process.env.DATABASE_NAME;
 if(!DbTest.endsWith(".db")){
-	console.log("wrong database link")
+	console.log("wrong database link");
 	return;
 }
 
 const nunjucks = require('nunjucks');
 const express = require('express');
 
-const sqlite3 = require('sqlite3').verbose()
+const sqlite3 = require('sqlite3').verbose();
 
 let db = new sqlite3.Database(path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
 
@@ -49,7 +49,7 @@ db.run('CREATE TABLE IF NOT EXISTS Payment(Order_ID INTEGER PRIMARY KEY, Sum INT
 });
 
 const app = express();
-const port = process.env.PORT
+const port = process.env.PORT;
 
 // Configures express to use nunjucks as template engine
 nunjucks.configure(__dirname, {
@@ -85,8 +85,8 @@ app.post('/payments/:orderId', function(req, res) {
 			console.log(err.message);
 			
 			let resp = JSON.parse('{}');
-			resp.message = "Could not create the payment"
-			resp.description = err.message
+			resp.message = "Could not create the payment";
+			resp.description = err.message;
 			res.status(400).json(resp);
 			
 		} else {
