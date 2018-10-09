@@ -4,10 +4,10 @@ require('winston-daily-rotate-file');
 const path =require('path')
 const logDir = 'log';
 
-  const filename= path.resolve(__dirname,'../Payment/logdir') //Path to logDir where all logs will be saved
+  const filename= path.resolve(__dirname,'../logdir') //Path to logDir where all logs will be saved
 
   const dailyRotateFileTransport = new transports.DailyRotateFile({ //Makes a new log document every day
-    filename: filename+`/%DATE%-log.log`,
+    filename: filename+`/%DATE%-log.json`,
     datePattern: 'YYYY-MM-DD'
   });
 const logger = createLogger({
@@ -17,10 +17,19 @@ const logger = createLogger({
       format.timestamp({
           format: 'DD-MM-YYYY HH:mm:ss' //Date and time
       }),
-      format.printf(info => `${info.timestamp} : ${info.message}`) //How it should look in the log document
+      format.json()
   ),
   
-  transports: [dailyRotateFileTransport] //Transport command to send it tot the chosen log fil 
+  
+  transports: [ new transports.Console({
+    level: 'info',
+    format: format.combine(
+      format.colorize(),
+      format.printf(
+        info => `${info.timestamp} : ${info.message}`//How it should look in the log document
+      )
+    )
+  }),dailyRotateFileTransport] //Transport command to send it tot the chosen log fil 
 });
 
 logger.info('Hello world'); //Information wich will be added
