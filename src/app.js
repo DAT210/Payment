@@ -41,7 +41,7 @@ const express = require('express');
 
 const sqlite3 = require('sqlite3').verbose();
 
-let db = new sqlite3.Database(path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
+let db = new sqlite3.Database(':memory:');//path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
 
 db.run('CREATE TABLE IF NOT EXISTS Payment(Order_ID INTEGER PRIMARY KEY, Sum INTEGER, Paid INTEGER, Paid_Date TEXT, Discount INTEGER)', function(err) {
 	if (err) {

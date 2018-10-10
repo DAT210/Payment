@@ -10,7 +10,9 @@ COPY ./src ./src
 ENV NODE_ENV prod
 COPY ./env/prod.env ./env/
 
-EXPOSE 3000
+COPY ./db ./db
+
+EXPOSE 37200
 
 CMD [ "node", "./src/app.js" ]
 
