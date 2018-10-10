@@ -5,10 +5,10 @@ const path =require('path')
 const logDir = 'log';
 
 
-  const path= path.resolve(__dirname,'../logdir') //Path to logDir where all logs will be saved
+  const temp_path= path.resolve(__dirname,'../logdir') //Path to logDir where all logs will be saved
   
   const dailyRotateFileTransport = new transports.DailyRotateFile({ //Makes a new log document every day
-    filename: path+`/%DATE%-log.json`,
+    filename: temp_path+`/%DATE%-log.json`,
 
     datePattern: 'YYYY-MM-DD'
     
