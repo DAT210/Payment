@@ -1,0 +1,81 @@
+{% extends "template.html" %}
+
+{% block title %} Payment {% endblock %}
+
+{% block content %}
+
+<div class="payment">
+	Betal kontant
+	<div class="preview">
+		<p id="cashpayment">
+			<label for="bordnr">
+				<span>Bord nummer:</span>
+				<output name="bordnr"> ****** </output>
+			</label>
+		</p>
+		<p id="cashpayment">
+			<label for="bordnr">
+				<span>Beløp å betale:</span>
+				<output name="bordnr"> ****** </output>
+			</label>
+		</p>
+	</div>
+	<table>
+		<tr>
+			<td></td>
+			<td><button class="button" type="button" name="back-button" onclick="location.href='/choosepay'">BACK</button></td>
+			<td></td>
+			<td></td>
+			<td class="nospace"></td>
+			<td></td>
+			<td></td>
+			<td><button id="cashpay-button" class="button" type="button" name="cashpay-button">PAY</button>
+				<div id="myModal" class="modal">
+					<!-- Modal content -->
+					<div class="modal-content">
+						<span class="close">&times;</span>
+						<p>Payment in process, please wait for the waiter to collect payment...</p>
+					</div>
+				</div>
+
+
+			</td>
+			<td></td>
+		</tr>
+	</table>
+
+	<script>
+		//source: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_modal
+
+		<!-- The Modal -->
+
+
+		// Get the modal
+		var modal = document.getElementById('myModal');
+
+		// Get the button that opens the modal
+		var btn = document.getElementById("cashpay-button");
+
+		// Get the <span> element that closes the modal
+		var span = document.getElementsByClassName("close")[0];
+
+		// When the user clicks the button, open the modal
+		btn.onclick = function() {
+			modal.style.display = "block";
+		}
+
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function() {
+			modal.style.display = "none";
+		}
+
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+			if (event.target == modal) {
+				modal.style.display = "none";
+			}
+		}
+	</script>
+
+
+	{% endblock %}

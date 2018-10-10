@@ -58,12 +58,27 @@ nunjucks.configure(__dirname, {
 	express: app
 });
 
+
 app.use(express.static(__dirname, + '/static'));
 
 // Example route
 app.get('/', function (req, res) {
 
 	res.render('payment.html');
+
+});
+
+// Route to choosepay.html
+app.get('/choosepay', function (req, res) {
+
+	res.render('choosepay.html');
+
+});
+
+// Route to cashpay.html
+app.get('/cashpay', function (req, res) {
+
+	res.render('cashpay.html');
 
 });
 
@@ -80,7 +95,7 @@ app.post('/payments/:orderId', function(req, res) {
 
 	// Calculate price
 	let sum = 0;
-	
+
 	db.run(`INSERT INTO Payment(Order_ID, Sum, Paid, Paid_Date, Discount) VALUES (${orderid}, ${sum}, 0, "0", 0)`, function(err) {
 		if (err) {
 			console.log(err.message);

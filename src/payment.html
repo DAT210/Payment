@@ -1,18 +1,63 @@
 {% extends "template.html" %}
 
-{% block title %}
-	Payment page
-{% endblock %}
+{% block title %} Payment {% endblock %}
 
-{% block content  %} 
-	<p>Please choose payment method</p>
-	<br />
-	<!-- Paypal -->
-	<div id="paypal-button"></div>
-	<script src="https://www.paypalobjects.com/api/checkout.js"></script>
-	<script>
-		
-	</script>
+{% block content  %}
+
+<div class="payment">
+	Preview order
+	<div class="preview">
+		PLACEHOLDER FOR ORDER
+	</div>
+	<table>
+		<tr>
+			<td></td>
+			<td><button class="button" type="button" name="back-button">BACK</button></td>
+			<td></td>
+			<td>Sum:</td>
+			<td class="nospace"></td>
+			<td><output class="right" name="result">Total Amount</output></td>
+			<td></td>
+			<td><button class="button" type="button" name="pay-button" onclick="location.href='/choosepay'">PAY</button></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>Tips:</td>
+			<td class="nospace"></td>
+			<td><input type="text" name="tips" value=""></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>Velg kupong:</td>
+			<td class="nospace"></td>
+			<td><select class="cupon-select" name="cupons">
+				<option value=""></option><input type="submit" name="submit">
+			</select></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>Beløp å betale: </td>
+			<td class="nospace"></td>
+			<td><output name="result">New amount to pay</output></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+
+	</table>
 
 	<!-- Stripe -->
 	<!-- Cash -->
