@@ -107,6 +107,8 @@ Linux users can run `npm test`
 
 Windows users have to use PowerShell and run it using `$env:NODE_ENV = "test" ; npm run-script test-windows`
 
+If you're using Git BASH the command is `export NODE_ENV="test" ; npm run-script test-windows`
+
 If you're not using a linux terminal Windows PowerShell, you can still run the tests. You need to
 - Set the environment variable NODE_ENV to "test".
 - Start the server (`node src/app.js`)

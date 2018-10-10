@@ -8,7 +8,7 @@ RUN npm install
 COPY ./src ./src
 
 ENV NODE_ENV prod
-COPY ./env/default.env ./env/prod.env ./env/
+COPY ./env/prod.env ./env/
 
 EXPOSE 3000
 
