@@ -5,7 +5,7 @@
   "main": "src/app.js",
   "scripts": {
     "test": "concurrently --kill-others \"NODE_ENV=test node src/app.js\" \"NODE_ENV=test mocha\"",
-    "test-windows": "$env:NODE_ENV=\"test\" ; concurrently --kill-others \"node src/app.js\" \"mocha\""
+    "test-windows": "$env:NODE_ENV=\"test\" ; concurrently --kill-others \"node src/app.js\" \"mocha\"",
     "test-bash": "export NODE_ENV=\"test\" ; concurrently --kill-others \"node src/app.js\" \"mocha\""
   },
   "keywords": [
