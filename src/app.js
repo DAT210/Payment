@@ -1,47 +1,15 @@
 const path = require('path');
-
-let envfile = process.env.NODE_ENV;
-
-if (envfile === undefined) {
-	console.log('You need to set the NODE_ENV variable to run this program.');
-	console.log('Rename the /env/default.env file to match your NODE_ENV variable, and fill in missing api keys');
-	return;
-}
-
-require('dotenv').config({
-	path: path.resolve(__dirname, `../env/${envfile}.env`)
-});
-
-// List all envVariables that are going to be tested
-let requiredEnv = [
-  'PORT', 'DATABASE_NAME',
-  'PAYPAL_SANBOX_ID', 'PAYPAL_PRODUCTION_ID',
-  'STRIPE_PUBLISH_KEY', 'STRIPE_SECRET_KEY'
-];
-
-var envVarTests = true;
-
-// Tests all requiredEnv vars if they are empty and if they are longer than 0 length
-let unsetEnv = requiredEnv.filter((env) => !(process.env[env] !== ""));
-if (unsetEnv.length > 0) {
-  console.log("Required ENV variables are not set: [" + unsetEnv.join(', ') + "]");
-  envVarTests = false;
-  return;
-}
-
-// tests that the database file is listed as .db
-let DbTest = process.env.DATABASE_NAME;
-if(!DbTest.endsWith(".db")){
-	console.log("wrong database link");
-	return;
-}
-
 const nunjucks = require('nunjucks');
 const express = require('express');
-
+const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 
-let db = new sqlite3.Database(':memory:');//path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
+if (loadEnvironmentVariables()) { return; };
+if (validateEnvironmentVariables()) { return; };
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+let db = new sqlite3.Database(path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
 
 db.run('CREATE TABLE IF NOT EXISTS Payment(Order_ID INTEGER PRIMARY KEY, Sum INTEGER, Paid INTEGER, Paid_Date TEXT, Discount INTEGER)', function(err) {
 	if (err) {
@@ -58,8 +26,9 @@ nunjucks.configure(__dirname, {
 	express: app
 });
 
-
 app.use(express.static(__dirname, + '/static'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Example route
 app.get('/', function (req, res) {
@@ -68,14 +37,12 @@ app.get('/', function (req, res) {
 
 });
 
-// Route to choosepay.html
 app.get('/choosepay', function (req, res) {
 
-	res.render('choosepay.html');
+	res.render('choosepay.html', {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY, Order_ID: 310, price: 2500});
 
 });
 
-// Route to cashpay.html
 app.get('/cashpay', function (req, res) {
 
 	res.render('cashpay.html');
@@ -83,9 +50,6 @@ app.get('/cashpay', function (req, res) {
 });
 
 
-/*
-	Create db entry for orderid.
-*/
 app.post('/payments/:orderId', function(req, res) {
 
 	// Retrieve order information from Orders service,
@@ -160,30 +124,82 @@ app.get('/payments/:orderId', function(req, res) {
 
 
 /*
-	Called when user finishes payment on stripe or paypal (and cash?)
+	Internal path, should only be used by this service
+	Called when user finishes payment on stripe
 */
-app.put('/payments/:orderId', function(req, res) {
+app.put('/stripe-payment/:orderId', function(req, res) {
 	let orderid = parseInt(req.params.orderId, 10);
-	
-	db.run(`ÙPDATE Payment SET Paid = 1, Paid_Date = DATETIME('now') WHERE Order_ID = ${orderid}`, (err) => {
-		console.log(err.message);
-		res.send(err.message);
-		return;
+		
+	let charge_token = req.body.id;
+	let charge = stripe.charges.create({
+		amount: req.body.pricePaid,
+		currency: 'usd',
+		description: 'example charge',
+		source: charge_token
 	});
+		
+	charge.then(data => {	
+		let resp = JSON.parse('{}');
+		resp.paymentComplete = data.paid;
+		if (data.paid) {
+			db.run(`UPDATE Payment SET Paid = 1, Paid_Date = DATETIME('now') WHERE Order_ID = ${orderid}`, (err) => {
+				if (err) {
+					console.log(err.message);
+				}
+			});
+		}
 
-	res.send("Payment complete");
+		res.json(resp);
+	});
 });
 
-/*
-	test if the server can start 
-*/
-try{
-	if(envVarTests){
-		app.listen(port, () => console.log(`Payment service listening on port ${port}!`));
-	}else{
-		console.log("There is something wronge with the env variables. plese check before trying again");
+
+
+app.listen(port, () => console.log(`Payment service listening on port ${port}!`));
+
+
+
+function loadEnvironmentVariables() {
+	let envfile = process.env.NODE_ENV;
+
+	if (envfile === undefined) {
+		console.log('You need to set the NODE_ENV variable to run this program.');
+		console.log('Rename the /env/default.env file to match your NODE_ENV variable, and fill in missing api keys');
+		return true;
 	}
-}catch(err){
-	console.log("Server can not start, check ENV variable port, it should be an INT between 0 =< port > 65536");
+
+	require('dotenv').config({ 
+		path: path.resolve(__dirname, `../env/${envfile}.env`)
+	});
+
+	return false;
 }
+
+function validateEnvironmentVariables() {
+	let requiredEnv = [
+	  'PORT', 'DATABASE_NAME',
+ 	 'PAYPAL_SANBOX_ID', 'PAYPAL_PRODUCTION_ID',
+ 	 'STRIPE_PUBLISH_KEY', 'STRIPE_SECRET_KEY'
+	];
+
+	// Tests all requiredEnv vars if they are empty and if they are longer than 0 length
+	let unsetEnv = requiredEnv.filter((env) => !(process.env[env] !== ""));
+	if (unsetEnv.length > 0) {
+  		console.log("Required ENV variables are not set: [" + unsetEnv.join(', ') + "]");
+  		return true;
+	}
+
+	let db_name = process.env.DATABASE_NAME;
+	if(!db_name.endsWith(".db")){
+		console.log("Please enter a database name in the .env file. (needs to end in .db)");
+		return true;
+	}
+
+	let port = parseInt(process.env.PORT, 10);
+	if (port <= 0 || port > 65336) {
+		console.log(`Not a valid port number. ${port} should be between 1 and 65336`);
+		return true;
+	}
 	
+	return false;
+}	
