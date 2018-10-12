@@ -16,7 +16,7 @@
 			<td></td>
 			<td>Sum:</td>
 			<td class="nospace"></td>
-			<td><output class="right" name="result">Total Amount</output></td>
+			<td><output class="right" name="result">{{ Sum  }}</output></td>
 			<td></td>
 			<td><button class="button" type="button" name="pay-button" onclick="location.href='/choosepay'">PAY</button></td>
 			<td></td>
@@ -26,8 +26,14 @@
 			<td></td>
 			<td></td>
 			<td>Tips:</td>
-			<td class="nospace"></td>
-			<td><input type="text" name="tips" value=""></td>
+			<td class="nospace"></td>	
+			<script>
+				function calculateTotal() {
+					let tips = document.getElementById("tips").value;
+					document.getElementById("total").value = {{ Sum }} + parseInt(tips, 10);
+				}
+			</script>
+			<td><input id="tips" type="text" name="tips" onchange="calculateTotal()" value=""></td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -51,7 +57,7 @@
 			<td></td>
 			<td>Beløp å betale: </td>
 			<td class="nospace"></td>
-			<td><output name="result">New amount to pay</output></td>
+			<td><output id="total" name="result">{{ Sum }}</output></td>
 			<td></td>
 			<td></td>
 			<td></td>

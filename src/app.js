@@ -30,13 +30,6 @@ app.use(express.static(__dirname, + '/static'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Example route
-app.get('/', function (req, res) {
-
-	res.render('payment.html');
-
-});
-
 app.get('/choosepay', function (req, res) {
 
 	res.render('choosepay.html', {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY, Order_ID: 310, price: 2500});
@@ -60,6 +53,9 @@ app.post('/payments/:orderId', function(req, res) {
 	// Calculate price
 	let sum = 0;
 
+
+
+
 	db.run(`INSERT INTO Payment(Order_ID, Sum, Paid, Paid_Date, Discount) VALUES (${orderid}, ${sum}, 0, "0", 0)`, function(err) {
 		if (err) {
 			console.log(err.message);
@@ -78,19 +74,40 @@ app.post('/payments/:orderId', function(req, res) {
 
 /*
 	Display payment page to user
+
+	query options = 
+		?page=
+			payment
+			method
+			cash
+			confirmed
+			
 */
 app.get('/payment-pages/:orderId', function(req, res) {
-	// Check orderid in db
+	let page = req.query.page
+	if (!['payment', 'method', 'cash', 'confirmed'].includes(page)) {
+		console.log('not a valid page');
+		res.status(404).end();
+		return;
+	}
+
 	let orderid = parseInt(req.params.orderId, 10);
-
-	// Check if user owns order
-
 	db.get(`SELECT * FROM Payment WHERE Order_ID = ${orderid}`, (err, row) => {
+		if (err || row == undefined) {
+			res.status(404).end();
+			if (err) { console.log(err); }
+			return;
+		}
+		
+		if (page === 'payment') {
+			res.status(200).render('payment.html', row);
+		} else if (page == 'method') {
+			let json = Object.assign({}, {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY}, row);
+			res.render('choosepay.html', json);
+		} else {
+			res.status(500).send('Not implemented yet');
+		}
 	});
-
-	// Render page
-
-	res.status(500).send('Not implemented yet');	
 });
 
 
