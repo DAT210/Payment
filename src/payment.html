@@ -7,9 +7,42 @@
 <div class="payment">
 	Preview order
 	<div class="preview">
-		PLACEHOLDER FOR ORDER
+		<table id="paymenttable">
+			<tr>
+				<th colspan="5">Item</th>
+				<th colspan="1">Ammount</th>
+				<th colspan="1">Discount</th>
+				<th colspan="1">Unit Price</th>
+				<th colspan="1">Price</th>
+				<th colspan="1">Sum</th>
+			</tr>
+			{% for d in OrderPreview %}
+			<tr>
+				<td colspan="5">{{ d.item }}</td>
+				<td colspan="1">{{ d.ammount }}</td>
+				{% set discount = 0 %}
+				{% if d.discount and d.discount.type == "percent" %}
+				{% set discount = d.price * d.ammount * d.discount.value / 100 %}
+				<td colspan="1">{{ d.discount.value }} %</td>
+				{% elif d.discount and d.discount.type == "cash" %}
+				{% set discount = d.discount.value %}
+				<td colspan="1">{{ d.discount.value }} kr</td>
+				{% else %}
+				<td colspan="1"></td>
+				{% endif %}
+				<td colspan="1">{{ d.price }}</td>
+				<td colspan="1">{{ d.price * d.ammount }}</td>
+				<td colspan="1">{{ d.price * d.ammount - discount }}</td>
+			</tr>
+			{% endfor %}
+		</table>
 	</div>
+
+ <!--	{% include "njk/payment_footer.njk" %}
+
+-->
 	<table>
+
 		<tr>
 			<td></td>
 			<td><button class="button" type="button" name="back-button">BACK</button></td>
@@ -18,7 +51,30 @@
 			<td class="nospace"></td>
 			<td><output class="right" name="result">{{ Sum  }}</output></td>
 			<td></td>
-			<td><button class="button" type="button" name="pay-button" onclick="location.href='/choosepay'">PAY</button></td>
+			<script>
+				function navigateToMethodPage() {
+					let tips = parseInt(document.getElementById("tips").value, 10);
+					let discount = 0; // Send request to Rewards to calculate coupon discount
+
+					const http = new XMLHttpRequest();
+					const url = '/payments/{{ OrderID }}';
+					http.open('PATCH', url);
+					http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+
+					let json = JSON.parse('{}');
+					json.tips = tips;
+					json.discount = discount;
+
+					http.send(JSON.stringify(json));
+
+					http.onreadystatechange = function() {
+						if (this.readyState == 4 && this.status == 200) {
+							window.location.href = '/payment-pages/{{ OrderID }}?page=method'
+						}
+					}
+				}
+			</script>
+			<td><button class="button" type="button" name="pay-button" onclick="navigateToMethodPage()">PAY</button></td>
 			<td></td>
 		</tr>
 		<tr>
@@ -26,14 +82,14 @@
 			<td></td>
 			<td></td>
 			<td>Tips:</td>
-			<td class="nospace"></td>	
+			<td class="nospace"></td>
 			<script>
 				function calculateTotal() {
 					let tips = document.getElementById("tips").value;
-					document.getElementById("total").value = {{ Sum }} + parseInt(tips, 10);
+					document.getElementById("total").value = {{ Sum }} + {{ DeliveryPrice }} + parseInt(tips, 10);
 				}
 			</script>
-			<td><input id="tips" type="text" name="tips" onchange="calculateTotal()" value=""></td>
+			<td><input id="tips" type="number" name="tips" onchange="calculateTotal()" value="{{ Tips }}" min="0" step="1"></td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -55,9 +111,20 @@
 			<td></td>
 			<td></td>
 			<td></td>
+			<td>Levering: </td>
+			<td class="nospace"></td>
+			<td><output id="deliveryprice" name="result">{{ DeliveryPrice }}</output></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
 			<td>Beløp å betale: </td>
 			<td class="nospace"></td>
-			<td><output id="total" name="result">{{ Sum }}</output></td>
+			<td><output id="total" name="result">{{ Sum + DeliveryPrice + Tips }}</output></td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -67,5 +134,5 @@
 
 	<!-- Stripe -->
 	<!-- Cash -->
-	
+
 {% endblock %}

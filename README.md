@@ -36,9 +36,7 @@ cd project_directory
 # Install dependencies
 npm install
 # Create .env file
-cp ./env/default.env ./env/<name>.env
-# Insert your keys
-vi ./env/<name>.env
+node tools/setup_env.js
 # Set environment variable
 	# Windows Powershell
     	$env:NODE_ENV = "<name>"
@@ -72,8 +70,10 @@ cd Payment/
 # Install dependencies
 npm install
 # Create dev environment file
-cp ./env/default.dev ./env/dev.env
-vi ./env/dev.env
+	cp ./env/default.dev ./env/dev.env
+	vi ./env/dev.env
+# Or
+	node tools/setup_env.js
 ```
 
 ### Deploying / Publishing
@@ -92,7 +92,7 @@ And again you'd need to tell what the previous code actually does.
 
 ### Environment file
 
-You can configure which port the service runs on and which database you use in an environment file.This file is also used to store your API keys. It should be placed in the /env/ file, and the name needs to end in .env. [Example file](env/default.env).
+You can configure which port the service runs on and which database you use in an environment file.This file is also used to store your API keys. It should be placed in the /env/ file, and the name needs to end in .env. [Example file](env/default.env). If you've installed node, you can also generate one using the ```shell node tools/setup_env.js``` command.
 
 ### Command line arguments
 
@@ -122,19 +122,27 @@ to test style run
 in command window
 
 uses standard jshint style
-## Api Reference
+## API Reference
 
 The API doesn't require any authentication (yet).
 
 ### Endpoints:
 
-GET /payment-pages/:orderId
+GET /payment-pages/:orderId?page=["payment", "method", "cash", "confirmed"]
 
 GET /payments/:orderId
 
 POST /payments/
 
 ### Details:
+
+#### GET /payment-pages/:orderId?page=["payment", "method", "cash", "confirmed"]
+	Returns the html pages so users can pay for their order.
+	?page=
+		payment => The user can see their total price and add a tip.
+		method => The user can select their payment method.
+		cash => Page asking for confirmation of cash payment.
+		confirmed => Page confirming that the order is payed for.
 
 #### GET /payments/:orderId
 	Returns information about a payment
@@ -143,16 +151,56 @@ POST /payments/
 	Response format
 		{
 			"Order_ID":	int,
-			"Sum":		int,
+			"Sum":		real,
+			"Tips":		real,
+			"DeliveryPrice"	real,
 			"Paid":		int,
 			"Paid_Date":	string,
-			"Discount":	int
+			"Discount":	real
+		}
+
+#### POST /payments/
+	Used to signal that an order need a payment.
+	Request body format:
+		{
+			"customer_ID":	int,
+			"order_ID":	int,
+			"delivery":
+			{
+				"price":	real,
+				"method":	string,
+				"est_time":	string,
+				"address":	string
+			},
+			"ordered":
+			[
+				{ 
+					"name":		string,
+					"id":		int,
+					"price":	real,
+					"amount":	int
+				}
+			]
 		}
 
 ## Database
 
-Explaining what database (and version) has been used. Provide download links.
-Documents your database design and schemas, relations etc... 
+This service is built with [SQLite](https://www.sqlite.org/), using the [sqlite3 package](https://www.npmjs.com/package/sqlite3). Database version is based on the version on your system. If you don't have SQLite on your system, version 3.15.0 will be used. You can download SQLite [here](https://www.sqlite.org/download.html).
+
+The database only has one table: Payment, with columns:
+- OrderID	INTEGER PRIMARY KEY
+- Sum		REAL
+- Tips		REAL
+- DeliveryPrice	REAL
+- Paid		INTEGER
+- PaidDate	TEXT
+- Discount	REAL
+
+Sum, Tips, DeliveryPrice and Discount are used to calculate how much the customer should pay.
+
+Paid is true (1) when the customer has paid, or false (0) when the customer still needs to pay.
+
+PaidDate is the date when the customer paid (in string format), or NULL.
 
 ## Licensing
 

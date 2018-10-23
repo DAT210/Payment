@@ -1,180 +1,41 @@
 const path = require('path');
-const nunjucks = require('nunjucks');
-const express = require('express');
-const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
 
 if (loadEnvironmentVariables()) { return; };
 if (validateEnvironmentVariables()) { return; };
 
+const nunjucks = require('nunjucks');
+const express = require('express');
+const bodyParser = require('body-parser');
+const sqlite3 = require('sqlite3').verbose();
+const { createLogger, format, transports } = require('winston');
+require('winston-daily-rotate-file');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-let db = new sqlite3.Database(path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
-
-db.run('CREATE TABLE IF NOT EXISTS Payment(Order_ID INTEGER PRIMARY KEY, Sum INTEGER, Paid INTEGER, Paid_Date TEXT, Discount INTEGER)', function(err) {
-	if (err) {
-		console.log(err.message);
-	}
-});
-
+const logger = setupLogger();
+const db = setupDatabase();
 const app = express();
 const port = process.env.PORT;
 
+const handlers = new (require('./handlers.js'))(db, logger, stripe);
+
 // Configures express to use nunjucks as template engine
-nunjucks.configure(__dirname, {
-	autoescape: true,
-	express: app
-});
+nunjucks.configure(__dirname, { autoescape: true, express: app });
 
 app.use(express.static(__dirname, + '/static'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/choosepay', function (req, res) {
+/* External paths, can be called by other services. */
+app.post('/payments/:orderId', (req, res) => handlers.post_payment_handler(req, res));
+app.patch('/payments/:orderId', (req, res) => handlers.patch_payment_handler(req, res));
+app.get('/payment-pages/:orderId', (req, res) => handlers.payment_pages_handler(req, res));
+app.get('/payments/:orderId', (req, res) => handlers.payment_status_handler(req, res));
 
-	res.render('choosepay.html', {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY, Order_ID: 310, price: 2500});
-
-});
-
-app.get('/cashpay', function (req, res) {
-
-	res.render('cashpay.html');
-
-});
-
-
-app.post('/payments/:orderId', function(req, res) {
-
-	// Retrieve order information from Orders service,
-	// or get in from the request.
-	let orderid = parseInt(req.params.orderId, 10);
-	console.log("Inserting new order " + orderid);	
-
-	// Calculate price
-	let sum = 0;
-
-
-
-
-	db.run(`INSERT INTO Payment(Order_ID, Sum, Paid, Paid_Date, Discount) VALUES (${orderid}, ${sum}, 0, "0", 0)`, function(err) {
-		if (err) {
-			console.log(err.message);
-			
-			let resp = JSON.parse('{}');
-			resp.message = "Could not create the payment";
-			resp.description = err.message;
-			res.status(400).json(resp);
-			
-		} else {
-			res.status(201).end();
-		}
-	});
-});
-
-
-/*
-	Display payment page to user
-
-	query options = 
-		?page=
-			payment
-			method
-			cash
-			confirmed
-			
-*/
-app.get('/payment-pages/:orderId', function(req, res) {
-	let page = req.query.page
-	if (!['payment', 'method', 'cash', 'confirmed'].includes(page)) {
-		console.log('not a valid page');
-		res.status(404).end();
-		return;
-	}
-
-	let orderid = parseInt(req.params.orderId, 10);
-	db.get(`SELECT * FROM Payment WHERE Order_ID = ${orderid}`, (err, row) => {
-		if (err || row == undefined) {
-			res.status(404).end();
-			if (err) { console.log(err); }
-			return;
-		}
-		
-		if (page === 'payment') {
-			res.status(200).render('payment.html', row);
-		} else if (page == 'method') {
-			let json = Object.assign({}, {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY}, row);
-			res.render('choosepay.html', json);
-		} else {
-			res.status(500).send('Not implemented yet');
-		}
-	});
-});
-
-
-/*
-	Get status about a payment
-
-	Response format, JSON
-	Valid response with data has status code 200.
-	Code 404 means the payment doesn't exist
-	{
-		"Order_ID":	int,
-		"Sum":		int,
-		"Paid":		int,
-		"Paid_Date":	string,
-		"Discount":	int
-	}
-*/
-app.get('/payments/:orderId', function(req, res) {
-	// Check orderid in db
-	let orderid = parseInt(req.params.orderId, 10);
-
-	db.get(`SELECT * FROM Payment WHERE Order_ID = ${orderid}`, (err, row) => {
-		if (row == undefined) {
-			res.status(404).end();
-		} else {
-			res.status(200).json(row);
-		}
-	});
-});
-
-
-
-/*
-	Internal path, should only be used by this service
-	Called when user finishes payment on stripe
-*/
-app.put('/stripe-payment/:orderId', function(req, res) {
-	let orderid = parseInt(req.params.orderId, 10);
-		
-	let charge_token = req.body.id;
-	let charge = stripe.charges.create({
-		amount: req.body.pricePaid,
-		currency: 'usd',
-		description: 'example charge',
-		source: charge_token
-	});
-		
-	charge.then(data => {	
-		let resp = JSON.parse('{}');
-		resp.paymentComplete = data.paid;
-		if (data.paid) {
-			db.run(`UPDATE Payment SET Paid = 1, Paid_Date = DATETIME('now') WHERE Order_ID = ${orderid}`, (err) => {
-				if (err) {
-					console.log(err.message);
-				}
-			});
-		}
-
-		res.json(resp);
-	});
-});
-
-
+/* Internal paths, should only be used by this service. */
+app.put('/paypal-payment/:orderId', (req, res) => handlers.paypal_payment_handler(req, res));
+app.put('/stripe-payment/:orderId', (req, res) => handlers.stripe_payment_handler(req, res));
 
 app.listen(port, () => console.log(`Payment service listening on port ${port}!`));
-
-
 
 function loadEnvironmentVariables() {
 	let envfile = process.env.NODE_ENV;
@@ -185,7 +46,7 @@ function loadEnvironmentVariables() {
 		return true;
 	}
 
-	require('dotenv').config({ 
+	require('dotenv').config({
 		path: path.resolve(__dirname, `../env/${envfile}.env`)
 	});
 
@@ -217,6 +78,48 @@ function validateEnvironmentVariables() {
 		console.log(`Not a valid port number. ${port} should be between 1 and 65336`);
 		return true;
 	}
-	
+
 	return false;
-}	
+}
+
+function setupLogger() {
+	const logDir = 'log';
+  	const temp_path= path.resolve(__dirname,'../logdir') //Path to logDir where all logs will be saved
+
+ 	const dailyRotateFileTransport = new transports.DailyRotateFile({ //Makes a new log document every day
+    		filename: temp_path+`/%DATE%-log.json`,
+    		datePattern: 'YYYY-MM-DD'
+  	});
+
+	const logger = createLogger({
+  		level: 'info',  //Level is set to info, can change levels if you want to use it to something different feks debug
+  		format: format.combine(
+      		format.colorize(),
+      		format.timestamp({
+          		format: 'DD-MM-YYYY HH:mm:ss' //Date and time
+      		}),
+      		format.json()),
+  	transports: [ new transports.Console({
+    		level: 'info',
+    		format: format.combine(
+      		format.colorize(),
+      		format.printf(
+        		info => `${info.timestamp} : ${info.message}`//How it should look in the log document
+      		))
+  		}),dailyRotateFileTransport] //Transport command to send it tot the chosen log fil
+	});
+
+	return logger;
+}
+
+function setupDatabase() {
+	let db = new sqlite3.Database(path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
+
+	db.run('CREATE TABLE IF NOT EXISTS Payment(OrderID INTEGER PRIMARY KEY, Sum REAL, Tips REAL, DeliveryPrice REAL, Paid INTEGER, PaidDate TEXT, Discount REAL)', function(err) {
+		if (err) {
+			console.log(err.message);
+		}
+	});
+
+	return db;
+}
