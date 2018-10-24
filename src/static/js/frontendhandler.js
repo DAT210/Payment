@@ -27,5 +27,9 @@ function navogateToPaymentPage(){
 }
 
 function navigateBackToChoosePaymentPage(){
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> Update files
 }
