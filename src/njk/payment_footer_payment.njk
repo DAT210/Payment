@@ -1,0 +1,34 @@
+<div id="main-content-footer-container">
+  <div id="main-payment-footer-left">
+    <div id="back-btn">
+      <button type="button" name="back-button" onclick="navigateBackToOrderPage()">BACK</button>
+    </div>
+  </div>
+
+  <div id="main-payment-footer-middle">
+    <div id="formcontainer">
+      <form id="main-payment-footer-modifier" action="index.html" method="post">
+        <label for="sum">Sum:</label>
+        <output name="sum">{{ Sum  }}</output><br>
+
+        <label for="tips">Tips:</label>
+        <input type="text" name="tips" placeholder="Legg til tips" min="0" step="1"><br>
+
+        <label for="selectCupon">Velg kupong:</label>
+        <select name="selectCupon" onload="">
+          //TODO Link to javascript handler//
+        </select><br>
+
+        <label for="delivery">Levering:</label>
+        <output name="delivery">{{ DeliveryPrice }}</output><br>
+
+        <label for="total">Total:</label>
+        <output name="total">{{ Sum + DeliveryPrice + Tips }}</output>
+      </form>
+    </div>
+  </div>
+
+  <div id="main-payment-footer-right">
+    <button class="button" type="button" name="pay-button" onclick="navogateToChoosePayment()">PAY</button>
+  </div>
+</div>
