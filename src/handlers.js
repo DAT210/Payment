@@ -6,7 +6,7 @@ module.exports = class Handlers {
 	}
 
 
-	function getOrderPreview(orderid) {
+	getOrderPreview(orderid) {
 
 		// Get order information from Orders group
 
@@ -47,7 +47,7 @@ module.exports = class Handlers {
 	calculateTotalPrice(orderid) {
 		let db = this.db;
 		return new Promise(function(resolve, reject) {
-			let sql = `SELECT * FROM Payment WHERE Order_ID=${orderid}`;
+			let sql = `SELECT * FROM Payment WHERE OrderID=${orderid}`;
 			db.get(sql, (err, row) => {
 				if (err || row == undefined) {
 					console.log(err);
@@ -74,7 +74,7 @@ module.exports = class Handlers {
 		}
 
 		let orderid = parseInt(req.params.orderId, 10);
-		this.db.get(`SELECT * FROM Payment WHERE Order_ID = ${orderid}`, (err, row) => {
+		this.db.get(`SELECT * FROM Payment WHERE OrderID = ${orderid}`, (err, row) => {
 			if (err || row == undefined) {
 				res.status(404).end();
 				if (err) { console.log(err); }
@@ -82,7 +82,7 @@ module.exports = class Handlers {
 			}
 
 			if (page === 'payment') {
-				let json = Object.assign({}, {Order_ID: orderid, OrderPreview: this.getOrderPreview(orderid)} , row);
+				let json = Object.assign({}, {OrderID: orderid, OrderPreview: this.getOrderPreview(orderid)} , row);
 				res.status(200).render('payment.html', json);
 			} else if (page === 'method') {
 				this.calculateTotalPrice(orderid).then(function(v) {
@@ -115,7 +115,7 @@ module.exports = class Handlers {
 			deliveryprice = req.body.delivery.price;
 		}
 
-		this.db.run(`INSERT INTO Payment(Order_ID, Sum, DeliveryPrice, Paid, Paid_Date, Discount) VALUES (${orderid}, ${sum},${deliveryprice}, 0, "0", 0)`, function(err) {
+		this.db.run(`INSERT INTO Payment(OrderID, Sum, DeliveryPrice, Paid, Paid_Date, Discount) VALUES (${orderid}, ${sum},${deliveryprice}, 0, "0", 0)`, function(err) {
 			if (err) {
 				console.log(err.message);
 
@@ -133,13 +133,18 @@ module.exports = class Handlers {
 	patch_payment_handler(req, res) {
 		let orderid = parseInt(req.params.orderId, 10);
 		let col_val = '';
+		
+		if (req.body.tips !== undefined && req.body.tips < 0) {
+			req.body.tips = 0;
+		}
+
 		Object.keys(req.body).forEach(function(key) {
 			col_val += key + ' = ' + req.body[key] + ', ';
 		});
 		// Remove trailing ", "
 		col_val = col_val.slice(0, -2);
 
-		this.db.run(`UPDATE Payment SET ${col_val} WHERE Order_ID = ${orderid}`);
+		this.db.run(`UPDATE Payment SET ${col_val} WHERE OrderID = ${orderid}`);
 		res.status(200).end();
 	}
 
@@ -147,7 +152,7 @@ module.exports = class Handlers {
 	payment_status_handler(req, res) {
 		let orderid = parseInt(req.params.orderId, 10);
 
-		this.db.get(`SELECT * FROM Payment WHERE Order_ID = ${orderid}`, (err, row) => {
+		this.db.get(`SELECT * FROM Payment WHERE OrderID = ${orderid}`, (err, row) => {
 			if (row == undefined) {
 				res.status(404).end();
 			} else {
@@ -160,7 +165,7 @@ module.exports = class Handlers {
 	paypal_payment_handler(req, res) {
 		let orderid = parseInt(req.params.orderId, 10);
 
-		this.db.run(`UPDATE Payment SET Paid = 1, Paid_Date = DATETIME('now') WHERE Order_ID = ${orderid}`, (err) => {
+		this.db.run(`UPDATE Payment SET Paid = 1, Paid_Date = DATETIME('now') WHERE OrderID = ${orderid}`, (err) => {
 			if (err) {
 				console.log(err.message);
 			}
@@ -169,32 +174,42 @@ module.exports = class Handlers {
 		});
 	}
 
- 	stripe_payment_handler(req, res) {
+ 	async stripe_payment_handler(req, res) {
 		let orderid = parseInt(req.params.orderId, 10);
 
-		let charge_token = req.body.id;
-		let charge = this.stripe.charges.create({
-			amount: req.body.pricePaid * 100,
-			currency: 'nok',
-			description: 'example charge',
-			source: charge_token
-		});
-
-		charge.then(data => {
-			let resp = JSON.parse('{}');
-			resp.paymentComplete = data.paid;
-			if (data.paid) {
-				this.db.run(`UPDATE Payment SET Paid = 1, Paid_Date = DATETIME('now') WHERE Order_ID = ${orderid}`, (err) => {
-					if (err) {
-						console.log(err.message);
-					}
-				});
-				this.logger.info(orderid + ' stripe ');
-			}
-
-			res.json(resp);
-		}).catch(function (err) {
-			console.log(err);
-		});
+		let valid = false;
+		await this.calculateTotalPrice(orderid).then(function(v) {
+			valid = (v == req.body.pricePaid);
+		});	
+		
+		if (!valid) {
+			res.json({ paymentComplete: false });
+			return;
+		} else {
+			let charge_token = req.body.id;
+			let charge = this.stripe.charges.create({
+				amount: req.body.pricePaid * 100,
+				currency: 'nok',
+				description: 'example charge',
+				source: charge_token
+			});
+	
+			charge.then(data => {
+				let resp = JSON.parse('{}');
+				resp.paymentComplete = data.paid;
+				if (data.paid) {
+					this.db.run(`UPDATE Payment SET Paid = 1, PaidDate = DATETIME('now') WHERE OrderID = ${orderid}`, (err) => {
+						if (err) {
+							console.log(err.message);
+						}
+					});
+					this.logger.info(orderid + ' stripe ');
+				}
+	
+				res.json(resp);
+			}).catch(function (err) {
+				console.log(err);
+			});
+		}
 	}
 };
