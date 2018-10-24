@@ -213,3 +213,22 @@ module.exports = class Handlers {
 		}
 	}
 };
+
+function cash_payment_handler(req,res){
+	let orderid = parseInt(req.params.orderId, 10);
+
+	 db.get(`SELECT Paid FROM Payment WHERE Order_ID = ${orderid}`,(err,row)=>{
+		console.log(row);
+		if (row == undefined) {
+			res.status(404).end();
+		} else if (row.Paid=='1'){
+			 
+				res.status(200).send("1");
+		} 
+		else{
+				res.status(200).send("0");
+		}
+			
+		});
+		
+	}

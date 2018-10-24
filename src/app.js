@@ -34,7 +34,7 @@ app.get('/payments/:orderId', (req, res) => handlers.payment_status_handler(req,
 /* Internal paths, should only be used by this service. */
 app.put('/paypal-payment/:orderId', (req, res) => handlers.paypal_payment_handler(req, res));
 app.put('/stripe-payment/:orderId', (req, res) => handlers.stripe_payment_handler(req, res));
-
+app.put('/cash-payment/:orderId', (req, res) => handlers.cash_payment_handler(req, res));
 app.listen(port, () => console.log(`Payment service listening on port ${port}!`));
 
 function loadEnvironmentVariables() {
