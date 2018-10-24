@@ -108,3 +108,54 @@ table {
   text-decoration: none;
   cursor: pointer;
 }
+
+/************************* FOOTER ********************************/
+
+#main-content-footer-container{
+  width: 95%;
+  margin: auto;
+  margin-top: 1em;
+}
+
+.footer-container{
+  float: left;
+}
+
+.footer-backbtn-container{
+  width:25%;
+} 
+
+#back-btn-container{
+  width: 33%;
+  margin: auto;
+}
+
+#pay-btn-container{
+  width: 33%;
+  margin: auto;
+}
+
+/*
+PAYMENT
+*/
+#main-payment-footer-middle{
+  width: 50%;
+}
+
+#main-payment-footer-right{
+  width: 25%;
+}
+
+label{
+  text-align: righ;
+}
+
+/*
+CHOOSEPAY
+*/
+
+
+
+/*
+CASHPAY
+*/
