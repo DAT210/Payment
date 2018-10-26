@@ -115,7 +115,7 @@ module.exports = class Handlers {
 			deliveryprice = req.body.delivery.price;
 		}
 
-		this.db.run(`INSERT INTO Payment(OrderID, Sum, DeliveryPrice, Paid, Paid_Date, Discount) VALUES (${orderid}, ${sum},${deliveryprice}, 0, "0", 0)`, function(err) {
+		this.db.run(`INSERT INTO Payment(OrderID, Sum, DeliveryPrice, Paid, PaidDate, Discount) VALUES (${orderid}, ${sum},${deliveryprice}, 0, "0", 0)`, function(err) {
 			if (err) {
 				console.log(err.message);
 

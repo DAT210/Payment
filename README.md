@@ -92,11 +92,12 @@ And again you'd need to tell what the previous code actually does.
 
 ### Environment file
 
-You can configure which port the service runs on and which database you use in an environment file.This file is also used to store your API keys. It should be placed in the /env/ file, and the name needs to end in .env. [Example file](env/default.env). If you've installed node, you can also generate one using the ```shell node tools/setup_env.js``` command.
+You can configure which port the service runs on and which database you use in an environment file.This file is also used to store your API keys. It should be placed in the /env/ file, and the name needs to end in .env. [Example file](env/default.env). If you've installed node, you can also generate one using the ```node tools/setup_env.js``` command.
 
 ### Command line arguments
 
-None yet.
+Arguments:
+- ```--redirect_console_log``` , redirects output from all console.log() calls from stdout to nothing. 
 
 ## Tests
 

@@ -1,5 +1,7 @@
 const path = require('path');
 
+let argv = handleCommandLineArguments();
+
 if (loadEnvironmentVariables()) { return; };
 if (validateEnvironmentVariables()) { return; };
 
@@ -122,4 +124,18 @@ function setupDatabase() {
 	});
 
 	return db;
+}
+
+function handleCommandLineArguments() {
+	let argv = require('minimist')(process.argv.slice(2));
+
+
+	if (argv['redirect_console_log']) {
+		console.log = function(v) {
+			return;
+		}
+	}
+	
+
+	return argv;
 }

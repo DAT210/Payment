@@ -17,22 +17,31 @@ const sqlite3 = require('sqlite3').verbose()
 
 let db = new sqlite3.Database(path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
 
-async function cleandb() {
-	await new Promise(function(resolve, reject) { db.run(`DELETE FROM Payment`, (err) => resolve()); });
-	await new Promise(function(resolve, reject) { db.run(`VACUUM`, (err) => resolve()); });
-}
-cleandb();
-
 
 let data = [
 	{OrderID: 58, Sum: 150, DeliveryPrice: 0, Tips: 0, Paid: 1, PaidDate: '2018-05-19', Discount: 50 },
 	{OrderID: 100, Sum: 750, DeliveryPrice: 200, Tips: 150, Paid: 0, PaidDate: '0', Discount: 50 },
 	{OrderID: 104, Sum: 1750, DeliveryPrice: 100, Tips: 250, Paid: 1, PaidDate: '0', Discount: 150 }
 ];
-for (let i = 0; i < data.length; i++) {
-	let payment = data[i];
-	db.run(`INSERT INTO Payment(OrderID, Sum, DeliveryPrice, Tips, Paid, PaidDate, Discount) VALUES (${payment.OrderID}, ${payment.Sum}, ${payment.DeliveryPrice}, ${payment.Tips}, ${payment.Paid}, "${payment.PaidDate}", ${payment.Discount})`);
-}
+
+describe('Testing', function() {
+
+before(async function() {
+	async function cleandb() {
+		await new Promise(function(resolve, reject) { 
+				db.run(`DELETE FROM Payment`, (err) => resolve());
+			});
+			await new Promise(function(resolve, reject) { 
+				db.run(`VACUUM`, (err) => resolve());
+			});
+		}
+	await cleandb();
+
+	for (let i = 0; i < data.length; i++) {
+		let payment = data[i];
+		db.run(`INSERT INTO Payment(OrderID, Sum, DeliveryPrice, Tips, Paid, PaidDate, Discount) VALUES (${payment.OrderID}, ${payment.Sum}, ${payment.DeliveryPrice}, ${payment.Tips}, ${payment.Paid}, "${payment.PaidDate}", ${payment.Discount})`);
+	}
+});
 
 describe('API', function() {
 	describe('post(\'/payments/:orderId\')', function() {
@@ -85,4 +94,8 @@ describe('API', function() {
 	});	
 });
 
-db.close();
+after(function() {
+	db.close();
+});
+});
+
