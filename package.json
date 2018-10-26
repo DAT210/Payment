@@ -4,8 +4,8 @@
   "description": "DAT210 Fall18 Payment Service",
   "main": "src/app.js",
   "scripts": {
-    "test": "concurrently --kill-others \"NODE_ENV=test node src/app.js --redirect_console_log\" \"NODE_ENV=test mocha\"",
-    "test-windows": "concurrently --kill-others \"node src/app.js --redirect_console_log\" \"mocha\""
+    "test": "concurrently --kill-others --success first  \"NODE_ENV=test node src/app.js --redirect_console_log\" \"NODE_ENV=test mocha\"",
+    "test-windows": "concurrently --kill-others --success first \"node src/app.js --redirect_console_log\" \"mocha\""
   },
   "keywords": [
     "express"
