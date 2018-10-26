@@ -22,11 +22,12 @@ cd project_directory
 # Create .env file
 cp ./env/default.env ./env/prod.env
 # Insert your keys
+# The PORT variable will be ignored when the service is ran with Docker
 vi ./env/prod.env
-# Create a Docker image called PaymentService
-docker build -t PaymentService .
-# Run the image at <port> in detached mode
-docker run -p <port>:3000 -d PaymentService
+# Create a Docker image called paymentservice
+docker build -t paymentservice --build-arg port=<port> .
+# Run the image in detached mode
+docker run -p <running_port>:<port> -d paymentservice
 ```
 
 Node
