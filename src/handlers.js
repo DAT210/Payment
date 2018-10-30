@@ -82,7 +82,7 @@ module.exports = class Handlers {
 			}
 
 			if (page === 'payment') {
-				let json = Object.assign({}, {OrderID: orderid, OrderPreview: this.getOrderPreview(orderid)} , row);
+				let json = Object.assign({}, {coupons: [{id: 10, type: 0, value: 10}]}, {OrderID: orderid, OrderPreview: this.getOrderPreview(orderid)}, row);
 				res.status(200).render('payment.html', json);
 			} else if (page === 'method') {
 				this.calculateTotalPrice(orderid).then(function(v) {

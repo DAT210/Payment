@@ -1,3 +1,5 @@
+<script type="text/javascript" src="../static/js/frontendhandler.js"></script>
+
 <div id="main-content-footer-container">
   <div id="main-payment-footer-left">
     <div id="back-btn">
@@ -9,26 +11,31 @@
     <div id="formcontainer">
       <form id="main-payment-footer-modifier" action="index.html" method="post">
         <label for="sum">Sum:</label>
-        <output name="sum">{{ Sum  }}</output><br>
+        <output id="sum" name="sum">{{ Sum  }}</output><br>
 
         <label for="tips">Tips:</label>
-        <input type="text" name="tips" placeholder="Legg til tips" min="0" step="1"><br>
+        <input id="tips" type="text" name="tips" placeholder="Legg til tips" value="0" min="0" step="1"><br>
 
         <label for="selectCupon">Velg kupong:</label>
-        <select name="selectCupon" onload="">
-          //TODO Link to javascript handler//
+        <select name="selectCupon" onload="" onchange="calculateCouponDiscount(this.value)">
+		<option value="-1" selected>Select Coupon</option>
+		{% for coupon in coupons %}
+			<option value="{{ coupon.id  }}">{{ coupon.value  }}{{ "%" if coupon.type == 0 else " kr" }}</option>
+		{% endfor %}
         </select><br>
 
-        <label for="delivery">Levering:</label>
-        <output name="delivery">{{ DeliveryPrice }}</output><br>
+	{% if DeliveryPrice %}
+        	<label for="delivery">Levering:</label>
+        	<output id="delivery" name="delivery">{{ DeliveryPrice }}</output><br>
+	{% endif %}
 
         <label for="total">Total:</label>
-        <output name="total">{{ Sum + DeliveryPrice + Tips }}</output>
+        <output id="total" name="total">{{ Sum + DeliveryPrice + Tips }}</output>
       </form>
     </div>
   </div>
 
   <div id="main-payment-footer-right">
-    <button class="button" type="button" name="pay-button" onclick="navogateToChoosePayment()">PAY</button>
+    <button class="button" type="button" name="pay-button" onclick="navigateToChoosePayment()">PAY</button>
   </div>
 </div>

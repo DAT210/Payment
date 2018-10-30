@@ -14,7 +14,9 @@ const values = [
 	{ 'prompt': 'paypal sandbox',	'value': 'none',	'file': 'PAYPAL_SANDBOX_ID' },
 	{ 'prompt': 'paypal production','value': 'none',	'file': 'PAYPAL_PRODUCTION_ID' },
 	{ 'prompt': 'stripe publish',	'value': 'none',	'file': 'STRIPE_PUBLISH_KEY' },
-	{ 'prompt': 'stripe secret',	'value': 'none',	'file': 'STRIPE_SECRET_KEY' }
+	{ 'prompt': 'stripe secret',	'value': 'none',	'file': 'STRIPE_SECRET_KEY' },
+	{ 'prompt': 'rewards service',	'value': 'none',	'file': 'REWARDS_SERVICE' },
+	{ 'prompt': 'orders service',	'value': 'none',	'file': 'ORDERS_SERVICE' }
 ];
 
 let q = 0;
