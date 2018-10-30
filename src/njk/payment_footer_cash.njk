@@ -8,14 +8,38 @@
 
   <div class="footer-container" id="cash-payment-footer-right">
     <div id="cash-container-btn">
-      <button id="cash-pay-button" type="button" name="cash-pay-button" onclick="cashPayment()">Betal</button>
+      <button id="cash-pay-button" type="button" name="cash-pay-button">Betal</button>
     </div>
-    <div id="waiting">
-      <p id="startpay"></p>
-    </div>
-    <div id="confirmed">
-    <p id=payed></p>
+   <script> 
+   document.getElementById("cash-pay-button").onclick= function Start_wait(){
+			document.getElementById("cash-pay-button").disabled=true;
+			
+			document.getElementById("startpay").innerHTML="Payment in process, please wait for the waiter to collect payment..."
+		
 
-    </div>
+	var intervallet=setInterval(function Cash_Pay(){
+			
+			var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+		
+		if(xhttp.responseText=="1"){
+			clearInterval(intervallet);
+			document.getElementById("payed").innerHTML="Payment complete"
+			
+	   }
+	   
+	}
+	
+};
+
+xhttp.open("GET", "/cash-payment/{{OrderID}}");
+xhttp.send();	
+},1000);
+		
+
+}
+</script>
+  
   </div>
 </div>

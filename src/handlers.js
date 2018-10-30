@@ -92,7 +92,13 @@ module.exports = class Handlers {
 					res.status(200).render('choosepay.html', json);
 				});
 			} else if (page === 'cash') {
-				res.render('cashpay.html', {OrderID: orderid});
+				this.calculateTotalPrice(orderid).then(function(v) {
+					let finalPrice = v;
+					console.log("Final price: " + finalPrice);
+					let json = Object.assign({}, {OrderID: orderid, TotalPrice: finalPrice}, row);
+					res.render('cashpay.html', json);
+				});
+				
 			} else if (page === 'confirmed') {
 				res.status(500).send('Not implemented yet');
 			} else {
@@ -212,23 +218,24 @@ module.exports = class Handlers {
 			});
 		}
 	}
-};
 
-function cash_payment_handler(req,res){
-	let orderid = parseInt(req.params.orderId, 10);
-
-	 db.get(`SELECT Paid FROM Payment WHERE Order_ID = ${orderid}`,(err,row)=>{
-		console.log(row);
-		if (row == undefined) {
-			res.status(404).end();
-		} else if (row.Paid=='1'){
-			 
-				res.status(200).send("1");
-		} 
-		else{
-				res.status(200).send("0");
-		}
+	cash_payment_handler(req,res){
+		let orderid = parseInt(req.params.orderId, 10);
+	
+		 this.db.get(`SELECT Paid FROM Payment WHERE OrderID = ${orderid}`,(err,row)=>{
+			console.log(row);
+			if (row == undefined) {
+				res.status(404).end();
+			} else if (row.Paid=='1'){
+				 
+					res.status(200).send("1");
+			} 
+			else{
+					res.status(200).send("0");
+			}
+				
+			});
 			
-		});
-		
-	}
+		}
+	
+};
