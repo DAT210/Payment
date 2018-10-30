@@ -1,7 +1,3 @@
-function navigateBackToOrderPage(){
-  //// TODO: add function to take user back to order page
-}
-
 function navigateToChoosePayment(){
 	let tips = parseInt(document.getElementById("tips").value, 10);
 	let discount = 0; // Send request to Rewards to calculate coupon discount
@@ -22,13 +18,6 @@ function navigateToChoosePayment(){
 			window.location.href = '/payment-pages/{{ OrderID }}?page=choosepay'
 		}
 	}
-}
-
-function navigateToPaymentPage(){
-
-}
-
-function navigateBackToChoosePaymentPage(){
 }
 
 function paypal-payment(){

@@ -92,7 +92,7 @@ module.exports = class Handlers {
 					res.status(200).render('choosepay.html', json);
 				});
 			} else if (page === 'cash') {
-				res.render('cashpay.html');
+				res.render('cashpay.html', {OrderID: orderid});
 			} else if (page === 'confirmed') {
 				res.status(500).send('Not implemented yet');
 			} else {
