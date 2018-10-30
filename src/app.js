@@ -9,11 +9,10 @@ if (env.validate()) { return; };
 const nunjucks = require('nunjucks');
 const express = require('express');
 const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const logger = require('./logger.js').getLogger();
-const db = setupDatabase();
+const db = require('./database.js').getDB();
 const app = express();
 const port = process.env.PORT;
 
@@ -37,18 +36,6 @@ app.put('/paypal-payment/:orderId', (req, res) => handlers.paypal_payment_handle
 app.put('/stripe-payment/:orderId', (req, res) => handlers.stripe_payment_handler(req, res));
 
 app.listen(port, () => console.log(`Payment service listening on port ${port}!`));
-
-function setupDatabase() {
-	let db = new sqlite3.Database(path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
-
-	db.run('CREATE TABLE IF NOT EXISTS Payment(OrderID INTEGER PRIMARY KEY, Sum REAL, Tips REAL, DeliveryPrice REAL, Paid INTEGER, PaidDate TEXT, Discount REAL)', function(err) {
-		if (err) {
-			console.log(err.message);
-		}
-	});
-
-	return db;
-}
 
 function handleCommandLineArguments() {
 	let argv = require('minimist')(process.argv.slice(2));
