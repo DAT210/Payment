@@ -1,17 +1,17 @@
 <div id="main-content-footer-container">
   <div class="footer-container footer-backbtn-container" id="choose-payment-footer-left">
     <div id="back-btn">
-      <button type="button" name="back-button" onclick="navigateBackToPaymentPage()">BACK</button>
+      <button type="button" name="back-button" onclick="location.href='/payment-pages/{{OrderID}}?page=payment'">BACK</button>
 
     </div>
   </div>
 
   <div class="footer-container" id="choose-payment-footer-right">
-    <div id="cash-container-btn">
+    <div class="payment_option_container" id="cash-container-btn">
       <button id="cash-button" type="button" name="cash-button" onclick="location.href='/payment-pages/{{OrderID}}?page=cash'">Kontant</button>
     </div>
 
-    <div id="stripe-container-btn">
+    <div class="payment_option_container" id="stripe-container-btn">
 	    <script src="https://checkout.stripe.com/checkout.js"></script>
 	    <button id="stripe-button" class="button" type="button" name="card-button">Card</button>
 
@@ -89,7 +89,77 @@
 
 </script>
       <button id="paypal-button" type="button" name="paypal" </button>
-    </div>
+</div>
     
+<script>
+function cashPayment(){
+
+    document.getElementById("cashpay-button").disabled=true;
+    
+    document.getElementById("startpay").innerHTML="Payment in process, please wait for the waiter to collect payment..."
+  
+
+var intervallet=setInterval(function Cash_Pay(){
+    
+    var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+  
+  if(xhttp.responseText=="1"){
+    clearInterval(intervallet);
+    document.getElementById("payed").innerHTML="Payment complete"
+    
+   }
+   
+}
+
+};
+
+xhttp.open("GET", "/cash-payment/{{Order_ID}}");
+xhttp.send();	
+},1000);
+  
+
+}
+
+var handler = StripeCheckout.configure({	
+	key: '{{ stripe_publish_key  }}',
+	image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+	locale: 'auto',
+	token: function(token) {
+		const http = new XMLHttpRequest();
+		const url = '/stripe-payment/{{ OrderID }}';
+		http.open('PUT', url);
+		http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+		token.pricePaid = {{ TotalPrice }};
+		http.send(JSON.stringify(token));
+		http.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				let json = JSON.parse(this.responseText);
+				if (json.paymentComplete) {
+					console.log("Payment complete");
+					// TODO: Redirect user to a new page.
+				} else { console.log("Payment not complete"); }
+			}
+		}
+
+	}
+});
+
+document.getElementById('stripe-button').addEventListener('click', function(e) {
+	handler.open({
+		name: 'Stripe payment',
+		currency: 'nok',	
+		amount: {{ TotalPrice * 100 }}
+	});
+	e.preventDefault();
+});
+
+window.addEventListener('popstate', function() {
+	handler.close();	
+});
+
+</script>
+
   </div>
 </div>
