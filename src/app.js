@@ -10,11 +10,9 @@ const nunjucks = require('nunjucks');
 const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
-const { createLogger, format, transports } = require('winston');
-require('winston-daily-rotate-file');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const logger = setupLogger();
+const logger = require('./logger.js').getLogger();
 const db = setupDatabase();
 const app = express();
 const port = process.env.PORT;
@@ -39,37 +37,6 @@ app.put('/paypal-payment/:orderId', (req, res) => handlers.paypal_payment_handle
 app.put('/stripe-payment/:orderId', (req, res) => handlers.stripe_payment_handler(req, res));
 
 app.listen(port, () => console.log(`Payment service listening on port ${port}!`));
-
-
-function setupLogger() {
-	const logDir = 'log';
-  	const temp_path= path.resolve(__dirname,'../logdir') //Path to logDir where all logs will be saved
-
- 	const dailyRotateFileTransport = new transports.DailyRotateFile({ //Makes a new log document every day
-    		filename: temp_path+`/%DATE%-log.json`,
-    		datePattern: 'YYYY-MM-DD'
-  	});
-
-	const logger = createLogger({
-  		level: 'info',  //Level is set to info, can change levels if you want to use it to something different feks debug
-  		format: format.combine(
-      		format.colorize(),
-      		format.timestamp({
-          		format: 'DD-MM-YYYY HH:mm:ss' //Date and time
-      		}),
-      		format.json()),
-  	transports: [ new transports.Console({
-    		level: 'info',
-    		format: format.combine(
-      		format.colorize(),
-      		format.printf(
-        		info => `${info.timestamp} : ${info.message}`//How it should look in the log document
-      		))
-  		}),dailyRotateFileTransport] //Transport command to send it tot the chosen log fil
-	});
-
-	return logger;
-}
 
 function setupDatabase() {
 	let db = new sqlite3.Database(path.resolve(__dirname, `../db/${process.env.DATABASE_NAME}`));
