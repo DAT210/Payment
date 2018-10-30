@@ -12,7 +12,7 @@
         <output name="sum">{{ Sum  }}</output><br>
 
         <label for="tips">Tips:</label>
-        <input type="text" name="tips" placeholder="Legg til tips" min="0" step="1"><br>
+        <input id="tips" type="text" name="tips" placeholder="Legg til tips" min="0" step="1"><br>
 
         <label for="selectCupon">Velg kupong:</label>
         <select name="selectCupon" onload="">
@@ -32,6 +32,29 @@
   <div class="footer-container" id="main-payment-footer-right">
    <div id="pay-btn-container">
     <button class="button" type="button" name="pay-button" onclick="navigateToChoosePayment()">PAY</button>
+
+<script>
+function navigateToChoosePayment(){
+	let tips = parseInt(document.getElementById("tips").value, 10);
+	let discount = 0; // Send request to Rewards to calculate coupon discount
+
+	const http = new XMLHttpRequest();
+	const url = '/payments/{{ OrderID }}';
+	http.open('PATCH', url);
+  	http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+
+  	let json = JSON.parse('{}');
+ 	json.tips = tips;
+ 	json.discount = discount;
+
+ 	http.send(JSON.stringify(json));
+
+	http.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			window.location.href = '/payment-pages/{{ OrderID }}?page=method'
+		}
+	}
+}</script>
 
   </div>
 </div>
