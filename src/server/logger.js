@@ -4,7 +4,7 @@ require('winston-daily-rotate-file');
 
 module.exports.getLogger = function setupLogger() {
 	const logDir = 'log';
-  	const temp_path= path.resolve(__dirname,'../logdir') //Path to logDir where all logs will be saved
+  	const temp_path= path.resolve(__dirname,'../../logdir') //Path to logDir where all logs will be saved
 
  	const dailyRotateFileTransport = new transports.DailyRotateFile({ //Makes a new log document every day
     		filename: temp_path+`/%DATE%-log.json`,

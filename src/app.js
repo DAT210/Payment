@@ -2,7 +2,7 @@ const path = require('path');
 
 let argv = handleCommandLineArguments();
 
-const env = require('./environment.js')
+const env = require('./server/environment.js')
 if (env.load()) { return; };
 if (env.validate()) { return; };
 
@@ -11,12 +11,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const logger = require('./logger.js').getLogger();
-const db = require('./database.js').getDB();
+const logger = require('./server/logger.js').getLogger();
+const db = require('./server/database.js').getDB();
 const app = express();
 const port = process.env.PORT;
 
-const handlers = new (require('./handlers.js'))(db, logger, stripe);
+const handlers = new (require('./server/handlers.js'))(db, logger, stripe);
 
 // Configures express to use nunjucks as template engine
 nunjucks.configure(__dirname, { autoescape: true, express: app });

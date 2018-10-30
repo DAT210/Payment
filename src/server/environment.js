@@ -10,7 +10,7 @@ module.exports.load = function loadEnvironmentVariables() {
 	}
 
 	require('dotenv').config({
-		path: path.resolve(__dirname, `../env/${envfile}.env`)
+		path: path.resolve(__dirname, `../../env/${envfile}.env`)
 	});
 
 	return false;
