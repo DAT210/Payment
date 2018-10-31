@@ -193,6 +193,8 @@ This service is built with [SQLite](https://www.sqlite.org/), using the [sqlite3
 
 The database only has one table: Payment, with columns:
 - OrderID	INTEGER PRIMARY KEY
+- CustomerID	INTEGER
+- PriceToPay	REAL
 - Sum		REAL
 - Tips		REAL
 - DeliveryPrice	REAL
@@ -200,7 +202,7 @@ The database only has one table: Payment, with columns:
 - PaidDate	TEXT
 - Discount	REAL
 
-Sum, Tips, DeliveryPrice and Discount are used to calculate how much the customer should pay.
+Sum, Tips, DeliveryPrice and Discount are used to calculate how much the customer should pay. This value is stored in PriceToPay.
 
 Paid is true (1) when the customer has paid, or false (0) when the customer still needs to pay.
 
