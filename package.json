@@ -26,6 +26,8 @@
   },
   "devDependencies": {
     "concurrently": "^4.0.1",
-    "jshint": "^2.9.6"
+    "git-hooks": "^1.1.10",
+    "jshint": "^2.9.6",
+    "shelljs": "^0.8.2"
   }
 }
