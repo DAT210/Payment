@@ -1,5 +1,7 @@
 # Payment Service
-> Payment API
+> Made by group 7 ([Payment](https://github.com/DAT210/Payment), [Rewards](https://github.com/DAT210/Rewards), [Game](https://github.com/DAT210/Game))
+
+
 
 The Payment Service can be used to charge customers.
 Supports Paypal, Stripe and cash.
@@ -10,10 +12,14 @@ You can run the Payment service with Docker or Node.
 
 This service depends on API keys from Paypal and Stripe.
 Before running you need have them in a environment file.
+
+
 Copy and rename the /env/default.env fileand fill in your keys.
 You .env file should be named prod.env if you're running with Docker.
 The service determines which .env file to use based on your NODE_ENV environment variable.
-It is currently not possible to run the service without a environment file.
+
+
+It is currently not possible to run the service without a environment file. You can however, override the values from the .env file by setting the environment variables manually before starting the server.
 
 Docker
 ```shell
@@ -111,7 +117,7 @@ Windows users have to use PowerShell and run it using `$env:NODE_ENV = "test" ; 
 
 If you're using Git BASH the command is `export NODE_ENV="test" ; npm run-script test-windows`
 
-If you're not using a linux terminal Windows PowerShell, you can still run the tests. You need to
+If you're not using a linux terminal or Windows PowerShell, you can still run the tests. You need to
 - Set the environment variable NODE_ENV to "test".
 - Start the server (`node src/app.js`)
 - Start the tests (written using the [mocha](https://mochajs.org/) framework.
@@ -119,11 +125,7 @@ If you're not using a linux terminal Windows PowerShell, you can still run the t
 ## Style guide
 Explain your code style and show how to check it.
 
-to test style run
-	jshint <file to test> 
-in command window
-
-uses standard jshint style
+TODO: Decide on a code style. We can't use JSHint because it doesn't support features after ES6. We need async/await support.
 ## API Reference
 
 The API doesn't require any authentication (yet).
