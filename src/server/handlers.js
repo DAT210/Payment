@@ -44,7 +44,7 @@ module.exports = class Handlers {
 		return '';
 	}
 
-	calculateTotalPrice(orderid) {
+	getTotalPrice(orderid) {
 		let db = this.db;
 		return new Promise(function(resolve, reject) {
 			let sql = `SELECT * FROM Payment WHERE OrderID=${orderid}`;
@@ -55,11 +55,7 @@ module.exports = class Handlers {
 					resolve(0);
 				}
 
-				// TODO: Calculate coupon discount
-				let total = row.Sum;
-				if (row.Tips != undefined) { total += row.Tips; }
-				if (row.DeliveryPrice != undefined) { total += row.DeliveryPrice; }
-				resolve(total);
+				resolve(row.PriceToPay);
 			});
 		});
 	}
@@ -85,12 +81,8 @@ module.exports = class Handlers {
 				let json = Object.assign({}, {coupons: [{id: 10, type: 0, value: 10}]}, {OrderID: orderid, OrderPreview: this.getOrderPreview(orderid)}, row);
 				res.status(200).render('payment.html', json);
 			} else if (page === 'method') {
-				this.calculateTotalPrice(orderid).then(function(v) {
-					let finalPrice = v;
-					console.log("Final price: " + finalPrice);
-					let json = Object.assign({}, {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY, TotalPrice: finalPrice}, row);
-					res.status(200).render('choosepay.html', json);
-				});
+				let json = Object.assign({}, {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY}, row);
+				res.status(200).render('choosepay.html', json);
 			} else if (page === 'cash') {
 				res.render('cashpay.html');
 			} else if (page === 'confirmed') {
@@ -115,7 +107,7 @@ module.exports = class Handlers {
 			deliveryprice = req.body.delivery.price;
 		}
 
-		this.db.run(`INSERT INTO Payment(OrderID, Sum, DeliveryPrice, Paid, PaidDate, Discount) VALUES (${orderid}, ${sum},${deliveryprice}, 0, "0", 0)`, function(err) {
+		this.db.run(`INSERT INTO Payment(OrderID, CustomerID, PriceToPay, Sum, DeliveryPrice, Paid, PaidDate, Discount) VALUES (${orderid}, ${req.body.customer_ID}, ${sum + deliveryprice}, ${sum},${deliveryprice}, 0, "0", 0)`, function(err) {
 			if (err) {
 				console.log(err.message);
 
@@ -178,7 +170,7 @@ module.exports = class Handlers {
 		let orderid = parseInt(req.params.orderId, 10);
 
 		let valid = false;
-		await this.calculateTotalPrice(orderid).then(function(v) {
+		await this.getTotalPrice(orderid).then(function(v) {
 			valid = (v == req.body.pricePaid);
 		});	
 		
