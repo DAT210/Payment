@@ -2,11 +2,12 @@
 
 {% block title %} Payment {% endblock %}
 
-{% block content  %}
+{% block content %}
 
 <div class="payment">
 	Preview order
 	<div class="preview">
+<<<<<<< HEAD
 		<table id="paymenttable">
 			<tr>
 				<th colspan="5">Item</th>
@@ -55,84 +56,20 @@
 				function navigateToMethodPage() {
 					let tips = parseInt(document.getElementById("tips").value, 10);
 					let discount = 0; // Send request to Rewards to calculate coupon discount
+=======
+>>>>>>> payment-redesign
 
-					const http = new XMLHttpRequest();
-					const url = '/payments/{{ OrderID }}';
-					http.open('PATCH', url);
-					http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+	</div>
+{% include "njk/payment_footer_payment.njk" %}
 
-					let json = JSON.parse('{}');
-					json.tips = tips;
-					json.discount = discount;
+</div>
 
-					http.send(JSON.stringify(json));
-
-					http.onreadystatechange = function() {
-						if (this.readyState == 4 && this.status == 200) {
-							window.location.href = '/payment-pages/{{ OrderID }}?page=method'
-						}
-					}
-				}
-			</script>
-			<td><button class="button" type="button" name="pay-button" onclick="navigateToMethodPage()">PAY</button></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td>Tips:</td>
-			<td class="nospace"></td>
-			<script>
-				function calculateTotal() {
-					let tips = document.getElementById("tips").value;
-					document.getElementById("total").value = {{ Sum }} + {{ DeliveryPrice }} + parseInt(tips, 10);
-				}
-			</script>
-			<td><input id="tips" type="number" name="tips" onchange="calculateTotal()" value="{{ Tips }}" min="0" step="1"></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td>Velg kupong:</td>
-			<td class="nospace"></td>
-			<td><select class="cupon-select" name="cupons">
-				<option value=""></option><input type="submit" name="submit">
-			</select></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td>Levering: </td>
-			<td class="nospace"></td>
-			<td><output id="deliveryprice" name="result">{{ DeliveryPrice }}</output></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td>Beløp å betale: </td>
-			<td class="nospace"></td>
-			<td><output id="total" name="result">{{ Sum + DeliveryPrice + Tips }}</output></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-
-	</table>
-
+<<<<<<< HEAD
 	<!-- Stripe -->
 	<!-- Cash -->
 -->
 {% endblock %}
+=======
+
+{% endblock %}
+>>>>>>> payment-redesign

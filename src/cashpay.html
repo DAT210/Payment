@@ -17,32 +17,19 @@
 					<p>xxxxxxx</p>
 					<p>{{TotalPrice}}</p>
 				</td>
+			
+				<td id="startpay">
+
+				</td>
+				<td id="payed">
+
+				</td>
 			</tr>
 		</table>
 	</div>
-	<table>
-		<tr>
-			<td></td>
-			<td><button class="button" type="button" name="back-button" onclick="location.href='/payment-pages/{{OrderID}}?page=payment'">BACK</button></td>
-			<td></td>
-			<td></td>
-			<td class="nospace"></td>
-			<td></td>
-			<td></td>
-			<td><button id="cashpay-button" class="button" type="button" name="cashpay-button">PAY</button>
-				<div id="myModal" class="modal">
-					<!-- Modal content -->
-					<div class="modal-content">
-						<span class="close">&times;</span>
-						<p>Payment in process, please wait for the waiter to collect payment...</p>
-					</div>
-				</div>
 
+	{% include "njk/payment_footer_cash.njk" %}
 
-			</td>
-			<td></td>
-		</tr>
-	</table>
 
 	<script>
 		//source: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_modal
@@ -76,6 +63,5 @@
 			}
 		}
 	</script>
-
 
 	{% endblock %}
