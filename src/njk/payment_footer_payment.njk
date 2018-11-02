@@ -1,38 +1,36 @@
 <div id="main-content-footer-container">
-  <div class="footer-container footer-backbtn-container" id="main-payment-footer-left">
-    <div id="back-btn-container">
+  <div class="footer-container" id="main-payment-footer-left">
+    <div class="back-btn-container">
       <button class="button" type="button" name="back-button" onclick="navigateBackToOrderPage()">BACK</button>
     </div>
   </div>
 
   <div class="footer-container" id="main-payment-footer-middle">
-    <div id="formcontainer">
-      <form id="main-payment-footer-modifier" action="index.html" method="post">
-        <label for="sum">Sum:</label>
-        <output name="sum">{{ Sum  }}</output><br>
+           <form id="main-payment-footer-modifier">
+               <label for="sum">Sum:</label>
+               <output name="sum">{{ Sum  }}</output><br>
 
-        <label for="tips">Tips:</label>
-        <input id="tips" type="text" name="tips" placeholder="Legg til tips" min="0" step="1"><br>
+               <label for="tips">Tips:</label>
+               <input id="tips" type="text" name="tips" placeholder="Legg til tips" min="0" step="1"><br>
 
-        <label for="selectCupon">Velg kupong:</label>
-        <select name="selectCupon" onload="">
-          //TODO Link to javascript handler//
-        </select><br>
+               <label for="selectCupon">Velg kupong:</label>
+               <select name="selectCupon" onload="">
+              //TODO Link to javascript handler//
+               </select><br>
 
-        <label for="delivery">Levering:</label>
-        <output name="delivery">{{ DeliveryPrice }}</output><br>
+               <label for="delivery">Levering:</label>
+               <output name="delivery">{{ DeliveryPrice }}</output><br>
 
-        <label for="total">Total:</label>
-        <output name="total">{{ Sum + DeliveryPrice + Tips }}</output>
-      </form>
-    </div>
-  </div>
-
+               <label for="total">Total:</label>
+               <output name="total">{{ Sum + DeliveryPrice + Tips }}</output>-
+           </form>
+       </div>
 
   <div class="footer-container" id="main-payment-footer-right">
    <div id="pay-btn-container">
     <button class="button" type="button" name="pay-button" onclick="navigateToChoosePayment()">PAY</button>
-
+</div>
+</div>
 <script>
 function navigateToChoosePayment(){
 	let tips = parseInt(document.getElementById("tips").value, 10);
@@ -55,6 +53,3 @@ function navigateToChoosePayment(){
 		}
 	}
 }</script>
-
-  </div>
-</div>
