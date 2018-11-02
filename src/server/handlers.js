@@ -84,7 +84,7 @@ module.exports = class Handlers {
 				let json = Object.assign({}, {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY}, row);
 				res.status(200).render('choosepay.html', json);
 			} else if (page === 'cash') {
-				this.calculateTotalPrice(orderid).then(function(v) {
+				this.getTotalPrice(orderid).then(function(v) {
 					let finalPrice = v;
 					console.log("Final price: " + finalPrice);
 					let json = Object.assign({}, {OrderID: orderid, TotalPrice: finalPrice}, row);
