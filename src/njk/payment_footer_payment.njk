@@ -58,7 +58,7 @@
 		</script>
 		
 		<label for="discount">Discount:</label>
-		<output id="discount" name="discount"> {{ Discount if Discount else 0 }} </output>
+		<output id="discount" name="discount"> {{ Discount if Discount else 0 }} </output><br>
 			
                <label for="delivery">Levering:</label>
                <output name="delivery">{{ DeliveryPrice if DeliveryPrice else 0 }}</output><br>
@@ -76,7 +76,8 @@
 <script>
 function navigateToChoosePayment(){
 	let tips = parseInt(document.getElementById("tips").value, 10);
-	let discount = 0; // Send request to Rewards to calculate coupon discount
+	let discount = parseInt(document.getElementById("discount").value, 10);
+	let total = parseInt(doucment.getElementById("total").value, 10); 
 
 	const http = new XMLHttpRequest();
 	const url = '/payments/{{ OrderID }}';
@@ -86,6 +87,7 @@ function navigateToChoosePayment(){
   	let json = JSON.parse('{}');
  	json.tips = tips;
  	json.discount = discount;
+	json.pricetopay = total;
 
  	http.send(JSON.stringify(json));
 
@@ -94,4 +96,5 @@ function navigateToChoosePayment(){
 			window.location.href = '/payment-pages/{{ OrderID }}?page=method'
 		}
 	}
-}</script>
+}
+</script>
