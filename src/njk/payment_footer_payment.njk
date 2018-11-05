@@ -1,5 +1,3 @@
-<script type="text/javascript" src="../static/js/frontendhandler.js"></script>
-
 <div id="main-content-footer-container">
   <div class="footer-container" id="main-payment-footer-left">
     <div class="back-btn-container">
@@ -8,24 +6,66 @@
   </div>
 
   <div class="footer-container" id="main-payment-footer-middle">
-           <form id="main-payment-footer-modifier">
+           <form id="main-payment-footer-modifier" onsubmit="return false"> 
+		<script>
+			function updateTotalPrice() {
+				let sum = {{ Sum }};
+				let deliveryPrice = {{ DeliveryPrice if DeliveryPrice else 0 }};
+				let discount = document.getElementById("discount").value;
+				let tips = document.getElementById("tips").value;
+				if (tips !== undefined) {
+					let tipAmount = parseInt(tips, 10);
+					if (tipAmount < 0) { tipAmount = 0; }
+					let discountAmount = parseInt(discount);
+
+					let total = document.getElementById("total");
+					total.value = sum + deliveryPrice + tipAmount - discountAmount;
+				}	
+			}
+		</script>
                <label for="sum">Sum:</label>
                <output name="sum">{{ Sum  }}</output><br>
 
                <label for="tips">Tips:</label>
-               <input id="tips" type="text" name="tips" placeholder="Legg til tips" min="0" step="1"><br>
+               <input id="tips" onchange="updateTotalPrice()" type="text" name="tips" placeholder="Legg til tips" min="0" step="1"><br>
 
                <label for="selectCupon">Velg kupong:</label>
-               <select name="selectCupon" onload="">
-              //TODO Link to javascript handler//
-               </select><br>
-
+               <select id="selectCoupon" name="selectCupon" onload="" onchange="updateDiscount(); updateTotalPrice();">
+               		<option value="none||none" selected>No coupon</option>
+			{% for coupon in coupons %}
+				<option value="{{coupon.type}}||{{coupon.value}}">{{ coupon.value }}{{ "%" if coupon.type == 0 else "kr" }}</option>
+			{% endfor %}
+		</select><br>
+		<script>
+			function updateDiscount() {
+				let sum = {{ Sum }};
+				let coupon = document.getElementById("selectCoupon").value;
+				let couponType = coupon.split("||")[0];
+				let couponAmount = coupon.split("||")[1];
+				let discountField = document.getElementById("discount");
+				if (couponType === "none") {
+					discountField.value = 0;
+					return;
+				}
+				if (couponType == 1) {
+					discountField.value = couponAmount;
+					return;	
+				}
+				if (couponType == 0) {
+					discountField.value = (sum / 100) * couponAmount;
+				}
+			}
+		</script>
+		
+		<label for="discount">Discount:</label>
+		<output id="discount" name="discount"> {{ Discount if Discount else 0 }} </output>
+			
                <label for="delivery">Levering:</label>
-               <output name="delivery">{{ DeliveryPrice }}</output><br>
+               <output name="delivery">{{ DeliveryPrice if DeliveryPrice else 0 }}</output><br>
 
                <label for="total">Total:</label>
-               <output name="total">{{ Sum + DeliveryPrice + Tips }}</output>-
-           </form>
+               <output id="total" name="total">{{ Sum + DeliveryPrice + Tips }}</output>
+	       </form>
        </div>
 
   <div class="footer-container" id="main-payment-footer-right">

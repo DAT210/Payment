@@ -78,7 +78,9 @@ module.exports = class Handlers {
 			}
 
 			if (page === 'payment') {
-				let json = Object.assign({}, {coupons: [{id: 10, type: 0, value: 10}]}, {OrderID: orderid, OrderPreview: this.getOrderPreview(orderid)}, row);
+				// TODO: Get user coupons from Rewards service
+				let coupons = [{value: 15, type: 0}, {value: 50, type: 1}];
+				let json = Object.assign({}, {coupons: [{id: 10, type: 0, value: 10}]}, {coupons: coupons, OrderID: orderid, OrderPreview: this.getOrderPreview(orderid)}, row);
 				res.status(200).render('payment.html', json);
 			} else if (page === 'method') {
 				let json = Object.assign({}, {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY}, row);
