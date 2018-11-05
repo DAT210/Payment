@@ -11,18 +11,18 @@
     </div>
 
     <div class="payment_option_container" id="stripe-container-btn">
-	    <script src="https://checkout.stripe.com/checkout.js"></script>
-	    <button id="stripe-button" class="button" type="button" name="card-button">Card</button>
+      <script src="https://checkout.stripe.com/checkout.js"></script>
+      <button id="stripe-button" class="button" type="button" name="card-button">Card</button>
 
 
     </div>
 
-    <div id="paypal-container-btn" onload="paypal-payment()" >
-       <script src="https://www.paypalobjects.com/api/checkout.js"></script>
-       <script>
-       
-  
-  	// Render the PayPal button
+    <div id="paypal-container-btn" onload="paypal-payment()">
+      <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+      <script>
+
+
+        // Render the PayPal button
 	paypal.Button.render({
     
     // Set your environment
@@ -88,78 +88,76 @@
     }, '#paypal-button');
 
 </script>
-      <button id="paypal-button" type="button" name="paypal" </button>
-</div>
-    
-<script>
-function cashPayment(){
+      <button id="paypal-button" type="button" name="paypal" </button> </div> <script>
+        function cashPayment(){
 
-    document.getElementById("cashpay-button").disabled=true;
-    
-    document.getElementById("startpay").innerHTML="Payment in process, please wait for the waiter to collect payment..."
-  
+        document.getElementById("cashpay-button").disabled=true;
 
-var intervallet=setInterval(function Cash_Pay(){
-    
-    var xhttp = new XMLHttpRequest();
-xhttp.onreadystatechange = function() {
-  if (this.readyState == 4 && this.status == 200) {
-  
-  if(xhttp.responseText=="1"){
-    clearInterval(intervallet);
-    document.getElementById("payed").innerHTML="Payment complete"
-    
-   }
-   
-}
+        document.getElementById("startpay").innerHTML="Payment in process, please wait for the waiter to collect
+        payment..."
 
-};
 
-xhttp.open("GET", "/cash-payment/{{Order_ID}}");
-xhttp.send();	
-},1000);
-  
+        var intervallet=setInterval(function Cash_Pay(){
 
-}
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
 
-var handler = StripeCheckout.configure({	
-	key: '{{ stripe_publish_key  }}',
-	image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
-	locale: 'auto',
-	token: function(token) {
-		const http = new XMLHttpRequest();
-		const url = '/stripe-payment/{{ OrderID }}';
-		http.open('PUT', url);
-		http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-		token.pricePaid = {{ PriceToPay }};
-		http.send(JSON.stringify(token));
-		http.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				let json = JSON.parse(this.responseText);
-				if (json.paymentComplete) {
-					console.log("Payment complete");
-					// TODO: Redirect user to a new page.
-				} else { console.log("Payment not complete"); }
-			}
-		}
+        if(xhttp.responseText=="1"){
+        clearInterval(intervallet);
+        document.getElementById("payed").innerHTML="Payment complete"
 
-	}
-});
+        }
 
-document.getElementById('stripe-button').addEventListener('click', function(e) {
-	handler.open({
-		name: 'Stripe payment',
-		currency: 'nok',	
-		amount: {{ TotalPrice * 100 }}
-	});
-	e.preventDefault();
-});
+        }
 
-window.addEventListener('popstate', function() {
-	handler.close();	
-});
+        };
 
-</script>
+        xhttp.open("GET", "/cash-payment/{{Order_ID}}");
+        xhttp.send();
+        },1000);
 
+
+        }
+
+        var handler = StripeCheckout.configure({
+        key: '{{ stripe_publish_key }}',
+        image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+        locale: 'auto',
+        token: function(token) {
+        const http = new XMLHttpRequest();
+        const url = '/stripe-payment/{{ OrderID }}';
+        http.open('PUT', url);
+        http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        token.pricePaid = {{ PriceToPay }};
+        http.send(JSON.stringify(token));
+        http.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        let json = JSON.parse(this.responseText);
+        if (json.paymentComplete) {
+        console.log("Payment complete");
+        // TODO: Redirect user to a new page.
+        } else { console.log("Payment not complete"); }
+        }
+        }
+
+        }
+        });
+
+        document.getElementById('stripe-button').addEventListener('click', function(e) {
+        handler.open({
+        name: 'Stripe payment',
+        currency: 'nok',
+        amount: {{ TotalPrice * 100 }}
+        });
+        e.preventDefault();
+        });
+
+        window.addEventListener('popstate', function() {
+        handler.close();
+        });
+
+        </script>
+
+    </div>
   </div>
-</div>
