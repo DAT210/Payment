@@ -76,7 +76,8 @@
 	<script>
 		function navigateToChoosePayment() {
 			let tips = parseInt(document.getElementById("tips").value, 10);
-			let discount = 0; // Send request to Rewards to calculate coupon discount
+			let discount = parseInt(document.getElementById("discount").value, 10);
+			let pricetopay = parseInt(document.getElementById("total").value, 10);
 
 			const http = new XMLHttpRequest();
 			const url = '/payments/{{ OrderID }}';
@@ -86,6 +87,7 @@
 			let json = JSON.parse('{}');
 			json.tips = tips;
 			json.discount = discount;
+			json.pricetopay = pricetopay;
 
 			http.send(JSON.stringify(json));
 
