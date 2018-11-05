@@ -63,7 +63,7 @@
         transactions: [
         {
           amount: {
-          total: '{{ TotalPrice }}', //need to insert updated value for total ammount
+          total: '{{ PriceToPay }}', //need to insert updated value for total ammount
           currency: 'NOK'
           }
         }
@@ -131,7 +131,7 @@ var handler = StripeCheckout.configure({
 		const url = '/stripe-payment/{{ OrderID }}';
 		http.open('PUT', url);
 		http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-		token.pricePaid = {{ TotalPrice }};
+		token.pricePaid = {{ PriceToPay }};
 		http.send(JSON.stringify(token));
 		http.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
