@@ -1,42 +1,26 @@
-{% extends "template.html" %}
-
-{% block title %} Payment {% endblock %}
-
-{% block content %}
+{% extends "template.html" %} {% block title %} Payment {% endblock %} {% block content %}
 
 <div class="payment">
-	Preview order
-	<div class="preview">
-		<table id="paymenttable">
-			<tr>
-				<th colspan="5">Item</th>
-				<th colspan="1">Ammount</th>
-				<th colspan="1">Discount</th>
-				<th colspan="1">Unit Price</th>
-				<th colspan="1">Price</th>
-				<th colspan="1">Sum</th>
-			</tr>
-			{% for d in OrderPreview %}
-			<tr>
-				<td colspan="5">{{ d.item }}</td>
-				<td colspan="1">{{ d.ammount }}</td>
-				{% set discount = 0 %}
-				{% if d.discount and d.discount.type == "percent" %}
-				{% set discount = d.price * d.ammount * d.discount.value / 100 %}
-				<td colspan="1">{{ d.discount.value }} %</td>
-				{% elif d.discount and d.discount.type == "cash" %}
-				{% set discount = d.discount.value %}
-				<td colspan="1">{{ d.discount.value }} kr</td>
-				{% else %}
-				<td colspan="1"></td>
-				{% endif %}
-				<td colspan="1">{{ d.price }}</td>
-				<td colspan="1">{{ d.price * d.ammount }}</td>
-				<td colspan="1">{{ d.price * d.ammount - discount }}</td>
-			</tr>
-			{% endfor %}
-		</table>
-	</div>
+    Preview order
+    <div class="preview">
+        <table id="paymenttable">
+            <tr>
+                <th colspan="5">Item</th>
+                <th colspan="1">Ammount</th>
+                <th colspan="1">Unit Price</th>
+                <th colspan="1">Sum</th>
+            </tr>
+            {% for d in OrderPreview %}
+            <tr>
+                <td colspan="5">{{ d.item }}</td>
+                <td colspan="1">{{ d.ammount }}</td>
+                <td colspan="1">{{ d.price }}</td>
+                <td colspan="1">{{ d.price * d.ammount }}</td>
+            </tr>
 
- 	{% include "njk/payment_footer_payment.njk" %}
-{% endblock %}
+            {% endfor %}
+
+        </table>
+    </div>
+
+    {% include "njk/payment_footer_payment.njk" %} {% endblock %}

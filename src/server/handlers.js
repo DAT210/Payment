@@ -87,9 +87,7 @@ module.exports = class Handlers {
 				res.status(200).render('choosepay.html', json);
 			} else if (page === 'cash') {
 				this.getTotalPrice(orderid).then(function(v) {
-					let finalPrice = v;
-					console.log("Final price: " + finalPrice);
-					let json = Object.assign({}, {OrderID: orderid, TotalPrice: finalPrice}, row);
+					let json = Object.assign({}, {OrderID: orderid}, row);
 					res.render('cashpay.html', json);
 				});
 				
