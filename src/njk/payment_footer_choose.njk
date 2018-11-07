@@ -93,8 +93,7 @@
 
         document.getElementById("cashpay-button").disabled=true;
 
-        document.getElementById("startpay").innerHTML="Payment in process, please wait for the waiter to collect
-        payment..."
+        document.getElementById("startpay").innerHTML = "Payment in process, please wait for the waiter to collect payment...";
 
 
         var intervallet=setInterval(function Cash_Pay(){
@@ -148,7 +147,7 @@
         handler.open({
         name: 'Stripe payment',
         currency: 'nok',
-        amount: {{ TotalPrice * 100 }}
+        amount: {{ PriceToPay * 100 }}
         });
         e.preventDefault();
         });

@@ -201,6 +201,7 @@ The database only has one table: Payment, with columns:
 - Paid		INTEGER
 - PaidDate	TEXT
 - Discount	REAL
+- CoupondID	INTEGER
 
 Sum, Tips, DeliveryPrice and Discount are used to calculate how much the customer should pay. This value is stored in PriceToPay.
 

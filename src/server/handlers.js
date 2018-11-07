@@ -79,8 +79,8 @@ module.exports = class Handlers {
 
 			if (page === 'payment') {
 				// TODO: Get user coupons from Rewards service
-				let coupons = [{value: 15, type: 0}, {value: 50, type: 1}];
-				let json = Object.assign({}, {coupons: [{id: 10, type: 0, value: 10}]}, {coupons: coupons, OrderID: orderid, OrderPreview: this.getOrderPreview(orderid)}, row);
+				let coupons = [{id: 17, value: 15, type: 0}, {id: 19, value: 50, type: 1}];
+				let json = Object.assign({}, {coupons: coupons, OrderID: orderid, OrderPreview: this.getOrderPreview(orderid)}, row);
 				res.status(200).render('payment.html', json);
 			} else if (page === 'method') {
 				let json = Object.assign({}, {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY}, row);
@@ -141,7 +141,6 @@ module.exports = class Handlers {
 		});
 		// Remove trailing ", "
 		col_val = col_val.slice(0, -2);
-
 		this.db.run(`UPDATE Payment SET ${col_val} WHERE OrderID = ${orderid}`);
 		res.status(200).end();
 	}

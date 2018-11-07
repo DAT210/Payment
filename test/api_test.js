@@ -19,9 +19,9 @@ let db = new sqlite3.Database(path.resolve(__dirname, `../db/${process.env.DATAB
 
 
 let data = [
-	{OrderID: 58, CustomerID: 9, PriceToPay: 100, Sum: 150, DeliveryPrice: 0, Tips: 0, Paid: 1, PaidDate: '2018-05-19', Discount: 50 },
-	{OrderID: 100, CustomerID: 17, PriceToPay: 900, Sum: 750, DeliveryPrice: 200, Tips: 150, Paid: 0, PaidDate: '0', Discount: 50 },
-	{OrderID: 104, CustomerID: 52, PriceToPay: 1950, Sum: 1750, DeliveryPrice: 100, Tips: 250, Paid: 1, PaidDate: '0', Discount: 150 }
+	{OrderID: 58, CustomerID: 9, PriceToPay: 100, Sum: 150, DeliveryPrice: 0, Tips: 0, Paid: 1, PaidDate: '2018-05-19', Discount: 50, CouponID: 5 },
+	{OrderID: 100, CustomerID: 17, PriceToPay: 900, Sum: 750, DeliveryPrice: 200, Tips: 150, Paid: 0, PaidDate: '0', Discount: 50, CouponID: 7 },
+	{OrderID: 104, CustomerID: 52, PriceToPay: 1950, Sum: 1750, DeliveryPrice: 100, Tips: 250, Paid: 1, PaidDate: '0', Discount: 150, CouponID: 21 }
 ];
 
 describe('Testing', function() {
@@ -39,7 +39,7 @@ before(async function() {
 
 	for (let i = 0; i < data.length; i++) {
 		let payment = data[i];
-		db.run(`INSERT INTO Payment(OrderID, CustomerID, PriceToPay, Sum, DeliveryPrice, Tips, Paid, PaidDate, Discount) VALUES (${payment.OrderID}, ${payment.CustomerID}, ${payment.PriceToPay}, ${payment.Sum}, ${payment.DeliveryPrice}, ${payment.Tips}, ${payment.Paid}, "${payment.PaidDate}", ${payment.Discount})`);
+		db.run(`INSERT INTO Payment(OrderID, CustomerID, PriceToPay, Sum, DeliveryPrice, Tips, Paid, PaidDate, Discount, CouponID) VALUES (${payment.OrderID}, ${payment.CustomerID}, ${payment.PriceToPay}, ${payment.Sum}, ${payment.DeliveryPrice}, ${payment.Tips}, ${payment.Paid}, "${payment.PaidDate}", ${payment.Discount}, ${payment.CouponID})`);
 	}
 });
 
