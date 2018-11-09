@@ -3,11 +3,41 @@
 <div class="payment">
     Choose payment method
     <div class="preview">
-
+        <table id="paymenttable">
+            <tr>
+                <th colspan="5">Item</th>
+                <th colspan="1">Ammount</th>
+                <th colspan="1">Unit Price</th>
+                <th colspan="1">Sum</th>
+            </tr>
+            {% for d in OrderPreview %}
+            <tr>
+                <td colspan="5">{{ d.item }}</td>
+                <td colspan="1">{{ d.ammount }}</td>
+                <td colspan="1">{{ d.price }} kr</td>
+                <td colspan="1">{{ d.price * d.ammount }} kr</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="5">Tips</td>
+                <td colspan="1"></td>
+                <td colspan="1"></td>
+                <td colspan="1">{{ Tips }} kr</td>
+            </tr>
+            <tr>
+                <td colspan="5">Rabatt</td>
+                <td colspan="1"></td>
+                <td colspan="1"></td>
+                <td colspan="1">-{{ Discount }} kr</td>
+            </tr>
+            <tr>
+                <td colspan="5">Levering</td>
+                <td colspan="1"></td>
+                <td colspan="1"></td>
+                <td colspan="1">{{ DeliveryPrice }} kr</td>
+            </tr>
+        </table>
     </div>
-
     {% include "njk/payment_footer_choose.njk" %}
-
-</div>
-
+    </div>
 {% endblock %}
