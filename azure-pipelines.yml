@@ -12,8 +12,8 @@ steps:
     docker push $(dockerId).azurecr.io/$(latestTag)
   displayName: 'Build and push Docker image'
   env:
-    DATABASE_NAME: prod.db
-    PAYPAL_SANDBOX_ID: demo_sandbox_client_id
-    PAYPAL_PRODUCTION_ID: demo_production_client_id
-    STRIPE_PUBLISH_KEY: $(stripePublishKey)
-    STRIPE_SECRET_KEY:  $(stripeSecretKey)
+    DATABASE_NAME: 'prod.db'
+    PAYPAL_SANDBOX_ID: 'demo_sandbox_client_id'
+    PAYPAL_PRODUCTION_ID: 'demo_production_client_id'
+    STRIPE_PUBLISH_KEY: '$(stripePublishKey)'
+    STRIPE_SECRET_KEY:  '$(stripeSecretKey)'
