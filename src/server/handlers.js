@@ -83,7 +83,7 @@ module.exports = class Handlers {
 				let json = Object.assign({}, {coupons: coupons, OrderID: orderid, OrderPreview: this.getOrderPreview(orderid)}, row);
 				res.status(200).render('payment.html', json);
 			} else if (page === 'method') {
-				let json = Object.assign({}, {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY}, row);
+				let json = Object.assign({}, {stripe_publish_key: process.env.STRIPE_PUBLISH_KEY, OrderPreview: this.getOrderPreview(orderid)}, row);
 				res.status(200).render('choosepay.html', json);
 			} else if (page === 'cash') {
 				this.getTotalPrice(orderid).then(function(v) {
