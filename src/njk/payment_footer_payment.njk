@@ -1,0 +1,111 @@
+<div id="main-content-footer-container">
+	<div class="footer-container" id="main-payment-footer-left">
+		<div class="back-btn-container">
+			<button class="button" type="button" name="back-button" onclick="navigateBackToOrderPage()">BACK</button>
+		</div>
+	</div>
+
+	<div class="footer-container" id="main-payment-footer-middle">
+		<form id="main-payment-footer-modifier" onsubmit="return false">
+			<script>
+				function updateTotalPrice() {
+				let sum = {{ Sum }};
+				let deliveryPrice = {{ DeliveryPrice if DeliveryPrice else 0 }};
+				let discount = document.getElementById("discount").value;
+				
+				let tips = document.getElementById("tips").value;
+				tips = parseInt(tips, 10);
+				if (tips < 0 || isNaN(tips)) { tips = 0; }
+				
+				discount = parseInt(discount, 10);
+				if (isNaN(discount)) { discount = 0; }			
+	
+				let total = document.getElementById("total");
+				total.value = sum + deliveryPrice + tips - discount;
+					
+			}
+		</script>
+			<label for="sum">Sum:</label>
+			<output name="sum">{{ Sum }}</output><br>
+
+			<label for="tips">Tips:</label>
+			<input id="tips" onchange="updateTotalPrice()" type="text" name="tips" value="{{Tips if Tips}}" placeholder="Legg til tips" min="0" step="1"><br>
+
+			<label for="selectCupon">Velg kupong:</label>
+			<select id="selectCoupon" name="selectCupon" onload="" onchange="updateDiscount(); updateTotalPrice();">
+				<option value="none||none||none" {{ "selected" if CouponID == undefined or CouponID == -1}} >No coupon</option>
+				{% for coupon in coupons %}
+				<option value="{{coupon.type}}||{{coupon.value}}||{{coupon.id}}" {{ "selected" if CouponID == coupon.id}}>{{ coupon.value }}{{ "%" if coupon.type == 0 else "kr" }}</option>
+				{% endfor %}
+			</select><br>
+			<script>
+				function updateDiscount() {
+				let sum = {{ Sum }};
+				let coupon = document.getElementById("selectCoupon").value;
+				let couponType = coupon.split("||")[0];
+				let couponAmount = coupon.split("||")[1];
+				let discountField = document.getElementById("discount");
+				if (couponType === "none") {
+					discountField.value = 0;
+					return;
+				}
+				if (couponType == 1) {
+					discountField.value = couponAmount;
+					return;	
+				}
+				if (couponType == 0) {
+					discountField.value = (sum / 100) * couponAmount;
+				}
+			}
+		</script>
+
+			<label for="discount">Discount:</label>
+			<output id="discount" name="discount"> {{ Discount if Discount else 0 }} </output><br>
+
+			<label for="delivery">Levering:</label>
+			<output name="delivery">{{ DeliveryPrice if DeliveryPrice else 0 }}</output><br>
+
+			<label for="total">Total:</label>
+			<output id="total" name="total">{{ Sum + DeliveryPrice + Tips - Discount }}</output>
+		</form>
+	</div>
+
+	<div class="footer-container" id="main-payment-footer-right">
+		<div id="pay-btn-container">
+			<button class="button" type="button" name="pay-button" onclick="navigateToChoosePayment()">PAY</button>
+		</div>
+	</div>
+	<script>
+		function navigateToChoosePayment() {
+			let tips = parseInt(document.getElementById("tips").value, 10);
+			let discount = parseInt(document.getElementById("discount").value, 10);
+			let pricetopay = parseInt(document.getElementById("total").value, 10);
+			
+			let couponId = document.getElementById("selectCoupon").value;
+			couponId = couponId.split("||")[2];
+
+			const http = new XMLHttpRequest();
+			const url = '/payments/{{ OrderID }}';
+			http.open('PATCH', url);
+			http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+
+			let json = JSON.parse('{}');
+			json.tips = tips;
+			json.discount = discount;
+			json.pricetopay = pricetopay;
+
+			if (couponId != "none") {
+				json.couponid = parseInt(couponId, 10);
+			} else {
+				json.couponid = -1;
+			}
+
+			http.send(JSON.stringify(json));
+
+			http.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					window.location.href = '/payment-pages/{{ OrderID }}?page=method'
+				}
+			}
+		}
+	</script>

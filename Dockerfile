@@ -1,0 +1,21 @@
+FROM node:8
+
+WORKDIR /usr/src/app
+
+ARG port
+ENV PORT $port
+
+COPY package*.json ./
+RUN npm install
+
+COPY ./src ./src
+
+ENV NODE_ENV prod
+COPY ./env/prod.env ./env/
+
+COPY ./db ./db
+
+EXPOSE $port
+
+CMD [ "node", "./src/app.js" ]
+

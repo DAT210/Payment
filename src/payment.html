@@ -1,0 +1,28 @@
+{% extends "template.html" %} {% block title %} Payment {% endblock %} {% block content %}
+
+<div class="payment">
+    Preview order
+    <div class="preview">
+        <table id="paymenttable">
+            <tr>
+                <th colspan="5">Item</th>
+                <th colspan="1">Ammount</th>
+                <th colspan="1">Unit Price</th>
+                <th colspan="1">Sum</th>
+            </tr>
+            {% for d in OrderPreview %}
+            <tr>
+                <td colspan="5">{{ d.item }}</td>
+                <td colspan="1">{{ d.ammount }}</td>
+                <td colspan="1">{{ d.price }} kr</td>
+                <td colspan="1">{{ d.price * d.ammount }} kr</td>
+            </tr>
+
+            {% endfor %}
+
+        </table>
+    </div>
+
+    {% include "njk/payment_footer_payment.njk" %}
+    </div>
+     {% endblock %}
