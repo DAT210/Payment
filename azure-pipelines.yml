@@ -1,0 +1,19 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+variables:
+  image: 'Payment'
+  latestTag: '$(image):latest'
+
+steps:
+- script: |
+    docker build -t $(dockerId).azurecr.io/$(latestTag) --build-arg port=80 .
+    docker login -u $(dockerId) -p $(pswd) $(dockerId).azurecr.io
+    docker push $(dockerId).azurecr.io/$(latestTag)
+  displayName: 'Build and push Docker image'
+  env:
+    DATABASE_NAME: 'prod.db'
+    PAYPAL_SANDBOX_ID: 'demo_sandbox_client_id'
+    PAYPAL_PRODUCTION_ID: 'demo_production_client_id'
+    STRIPE_PUBLISH_KEY: '$(stripePublishKey)'
+    STRIPE_SECRET_KEY:  '$(stripeSecretKey)'

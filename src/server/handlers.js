@@ -162,7 +162,7 @@ module.exports = class Handlers {
 	paypal_payment_handler(req, res) {
 		let orderid = parseInt(req.params.orderId, 10);
 
-		this.db.run(`UPDATE Payment SET Paid = 1, Paid_Date = DATETIME('now') WHERE OrderID = ${orderid}`, (err) => {
+		this.db.run(`UPDATE Payment SET Paid = 1, PaidDate = DATETIME('now') WHERE OrderID = ${orderid}`, (err) => {
 			if (err) {
 				console.log(err.message);
 			}
