@@ -37,6 +37,26 @@
     text-align: right;
 }
 
+.cupon-select {
+    min-width: 100px;
+    margin-right: 1em;
+}
+
+#paymenttable {
+    width: 100%;
+    margin-top: 1em;
+    text-align: left;
+    table-layout: fixed;
+}
+
+.nospace {
+    width: 0px;
+}
+
+.cashpayment {
+    top: 50%;
+}
+
 /************************* FOOTER ********************************/
 
 .button {
