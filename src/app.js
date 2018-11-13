@@ -2,9 +2,11 @@ const path = require('path');
 
 let argv = handleCommandLineArguments();
 
-const env = require('./server/environment.js')
-if (env.load()) { return; };
-if (env.validate()) { return; };
+if (argv['env-file'] === undefined) {
+	const env = require('./server/environment.js')
+	if (env.load()) { return; };
+	if (env.validate()) { return; };
+}
 
 const nunjucks = require('nunjucks');
 const express = require('express');
