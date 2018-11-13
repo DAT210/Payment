@@ -19,19 +19,16 @@ You .env file should be named prod.env if you're running with Docker.
 The service determines which .env file to use based on your NODE_ENV environment variable.
 
 
-It is currently not possible to run the service without a environment file. You can however, override the values from the .env file by setting the environment variables manually before starting the server.
+If you want to manually set each environment variable before starting the server, you can run app.js with the --no-env-file argument,.
 
 Docker
 ```shell
 # Navigate to project directory
 cd project_directory
-# Create .env file
-cp ./env/default.env ./env/prod.env
-# Insert your keys
-# The PORT variable will be ignored when the service is ran with Docker
-vi ./env/prod.env
+# Modify environment variables in the Dockerfile
+vi Dockerfile
 # Create a Docker image called paymentservice
-docker build -t paymentservice --build-arg port=<port> .
+docker build -t paymentservice --build-arg secret=<stripe secret key> --build-arg publish=<stripe publish key> .
 # Run the image in detached mode
 docker run -p <running_port>:<port> -d paymentservice
 ```
@@ -105,6 +102,7 @@ You can configure which port the service runs on and which database you use in a
 
 Arguments:
 - ```--redirect_console_log``` , redirects output from all console.log() calls from stdout to nothing. 
+- ```--no-env-file```,	the server won't try to load environment variables from a .env file
 
 ## Tests
 
