@@ -2,12 +2,11 @@ FROM node:8
 
 WORKDIR /usr/src/app
 
-ARG port
 ARG secret
 ARG publish
 
 ENV NODE_ENV prod
-ENV PORT $port
+ENV PORT 80
 ENV DATABASE_NAME prod.db
 ENV PAYPAL_SANDBOX_ID demo_sandbox_client_id
 ENV PAYPAL_PRODUCTION_ID demo_production_client_id
@@ -20,7 +19,7 @@ RUN npm install
 COPY ./src ./src
 COPY ./db ./db
 
-EXPOSE $port
+EXPOSE 80
 
 CMD [ "node", "./src/app.js", "--no-env-file"]
 
