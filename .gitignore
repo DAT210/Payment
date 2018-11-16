@@ -106,7 +106,7 @@ tags
 
 # End of https://www.gitignore.io/api/vim,node,visualstudiocode
 
-db/dev.db
+
 env/dev.env
 env/prod.env
 env/test.env
