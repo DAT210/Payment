@@ -14,8 +14,7 @@ This service depends on API keys from Paypal and Stripe.
 Before running you need have them in a environment file.
 
 
-Copy and rename the /env/default.env fileand fill in your keys.
-You .env file should be named prod.env if you're running with Docker.
+Copy and rename the /env/default.env file and fill in your keys.
 The service determines which .env file to use based on your NODE_ENV environment variable.
 
 
