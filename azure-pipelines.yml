@@ -9,5 +9,5 @@ steps:
 - script: |
     docker build -t $(dockerId).azurecr.io/$(latestTag) --build-arg secret=$(stripeSecretKey) --build-arg publish=$(stripePublishKey) .
     docker login -u $(dockerId) -p $(pswd) $(dockerId).azurecr.io
-    docker push $(dockerId).azurecr.io/$(latestTag)
+    docker push $(dockerId).azurecr.io/payment:latest
   displayName: 'Build and push Docker image'
